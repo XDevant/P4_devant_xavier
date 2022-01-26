@@ -1,5 +1,8 @@
+from controler.controler import Controler
+
 def main():
-    pass
+    ctrl = Controler()
+    ctrl.run()
 
 if __name__ == "__main__":
     main()
