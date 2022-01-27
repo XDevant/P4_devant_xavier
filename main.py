@@ -1,7 +1,12 @@
-from controler.controler import Controler
+from controlers.base import Controler
+from views.base import View
+from tinydb import TinyDB
+
 
 def main():
-    ctrl = Controler()
+    db = TinyDB("db_test.json")
+    view = View()
+    ctrl = Controler(db, view)
     ctrl.run()
 
 if __name__ == "__main__":
