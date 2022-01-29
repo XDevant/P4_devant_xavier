@@ -2,3 +2,6 @@ env/
 .vscode/settings.json
 P4.code-workspace
 db_models/__pycache__/
+views/help.py
+views/__pycache__/
+controlers/__pycache__/

@@ -4,7 +4,7 @@ from db_models.player import Player
 from db_models.tournament import Tournament
 
 
-db = TinyDB("db_test.json")
+db = TinyDB("db/db_test.json")
 players_table = db.table("players")
 players_table.truncate()
 players = []

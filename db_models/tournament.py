@@ -74,5 +74,6 @@ class Tournament:
             serialized = self.serialize()
             table.update(serialized, doc_id=self.id)
 
-
+    def add_player(self, id):
+        self.players.append(id)
 

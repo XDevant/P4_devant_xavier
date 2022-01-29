@@ -4,7 +4,7 @@ from tinydb import TinyDB
 
 
 def main():
-    db = TinyDB("db_test.json")
+    db = TinyDB("db/db_test.json")
     view = View()
     ctrl = Controler(db, view)
     ctrl.run()
