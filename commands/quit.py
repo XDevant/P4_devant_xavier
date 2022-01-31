@@ -4,4 +4,7 @@ class Quit():
         self.natural = ["quitter", "exit", "close", "fermer"]
 
     def execute(self, input):
-        print("Au revoir")
+        if input.startswith('.q'):
+            print("Au revoir")
+            return True
+        return False

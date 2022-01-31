@@ -10,18 +10,18 @@ class Controler:
 
 
     def run(self):
-        time_to_leave = False
-        result = getattr(self.selector, 'help')('me')
-        print(result)
-        while True:
-            command, values = self.view.gather_command()
-            command, values = self.refine_input(command, values)
-            print(command, "+", values.strip())
-            if time_to_leave:
-                break
-            self.last_command = command
+        running = True
+        commands = [command for command in dir(self.selector) if not command.startswith('__')]
+        while running:
+            input = self.view.gather_command()
+            for command in commands:
+                result = getattr(self.selector, command).execute(input)
+                if result:
+                    if command != "quit":
+                        self.last_command = command
+                    else:
+                        running = False
+                    break   
             print(self.last_command)
 
 
-    def refine_input(self, command, values):
-        return command, values

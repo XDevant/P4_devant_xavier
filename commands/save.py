@@ -4,4 +4,7 @@ class Save():
         self.natural = ["sauver", "save", "enregistrer"]
 
     def execute(self, input):
-        print("Sauvé !")
+        if input.startswith('.s'):
+            print("Sauvé !")
+            return True
+        return False

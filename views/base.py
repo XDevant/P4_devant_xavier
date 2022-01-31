@@ -7,8 +7,5 @@ class View:
         self.report = Report()
 
     def gather_command(self):
-        answer = input() + ' '
-        if answer.startswith('.'):
-            command = answer.split(' ')[0]
-            return command, answer[len(command):]
+        answer = input()
         return answer
