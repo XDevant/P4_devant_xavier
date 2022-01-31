@@ -5,3 +5,4 @@ db_models/__pycache__/
 views/help.py
 views/__pycache__/
 controlers/__pycache__/
+commands/__pycache__/

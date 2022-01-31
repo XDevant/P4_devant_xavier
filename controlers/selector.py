@@ -1,7 +1,10 @@
+import commands
+
 class Selector:
     def __init__(self):
-        pass
+        self.save = commands.Save()
 
-    def help(self, topic):
-        
+    def talk_to_me(self, topic):
+        self.save.execute("bouh")
+        print(dir(commands))
         return 1

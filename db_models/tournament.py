@@ -77,3 +77,7 @@ class Tournament:
     def add_player(self, id):
         self.players.append(id)
 
+    def new_round(self, round):
+        self.round += 1
+        self.round_details.append(round)
+

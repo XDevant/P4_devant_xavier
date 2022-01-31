@@ -34,4 +34,4 @@ class Round:
             return True
 
     def add_matches(self, *args):
-        self.matches = [match for match in args]
+        self.matches = [([match_ids[0], None], [match_ids[1], None]) for match_ids in args]
