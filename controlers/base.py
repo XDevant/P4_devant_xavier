@@ -6,23 +6,25 @@ class Controler:
         self.db = db
         self.view = view
         self.selector = Selector()
-        self.commands = [command for command in dir(self.selector) if not command.startswith('__')]
         self.last_command = None
 
 
     def run(self):
         running = True
-        print(self.commands)
         while running:
             input = self.view.gather_command()
-            for command in self.commands:
-                result = getattr(self.selector, command).execute(input)
-                if result:
-                    if command == "quit":
+            command = self.find_command(input)
+            if command:
+                if command == "quit":
                         running = False
-                    else:
-                        self.last_command = command
-                    break   
+                else:
+                    self.last_command = command
             print(self.last_command)
 
 
+    def find_command(self, input):
+        for command in self.selector:
+            result = getattr(self.selector, command).is_the_one(input)
+            if result:
+                return command
+        return None
