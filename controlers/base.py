@@ -15,11 +15,11 @@ class Controler:
             input = self.view.gather_command()
             command, raw_values = self.find_command(input)
             if command:
-                check, values = getattr(self.selector, command).parse_value(raw_values)
+                check, values = getattr(self.selector, command).parse_values(raw_values)
                 if check:
-                    check, data = getattr(self.selector, command).execute(values)
+                    check, data = getattr(self.selector, command).execute(values, self.db)
                     if check:
-                        strategy = self.view.display(command, values, data)
+                        strategy = self.view.display(data)
                         if command == "quit":
                             running = False
                         else:

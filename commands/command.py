@@ -17,11 +17,11 @@ class Command(ABC):
         return False, input
 
     @abstractmethod
-    def parse_values(self):
+    def parse_values(self, input):
         if not self.values:
             return True, {}
 
     @abstractmethod
-    def execute(self, input):
+    def execute(self, input, db):
         print("Sauvé")
         return True, None

@@ -12,10 +12,10 @@ class Save(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self):
-        return super().parse_values()
+    def parse_values(self, input):
+        return super().parse_values(input)
 
 
-    def execute(self, input):
+    def execute(self, input, db):
         print("Sauvé?")
-        return super().execute(input)
+        return super().execute(input, db)
