@@ -1,10 +1,10 @@
 from commands.command import Command
 
 
-class Quit(Command):
+class PlayerList(Command):
     def __init__(self):
-        self.commands = (".q", ".x")
-        self.natural = [["quitter", "exit", "close", "fermer"]]
+        self.commands = (".lj", ".lp")
+        self.natural = [["list", "joueur", "player"]]
         self.values = None
 
 
@@ -17,4 +17,4 @@ class Quit(Command):
 
 
     def execute(self):
-        return True
+        print("Sauvé")
