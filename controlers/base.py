@@ -17,20 +17,21 @@ class Controler:
             if command:
                 check, values = getattr(self.selector, command).parse_values(raw_values)
                 if check:
-                    check, data = getattr(self.selector, command).execute(values, self.db)
-                    if check:
-                        strategy = self.view.display(data)
+                    try:
+                        name, data = getattr(self.selector, command).execute(values, self.db)
+                    except Exception:
+                        strategy = self.view.execution_error(input, command, values)
+                    else:
+                        strategy = self.view.display(name, data)
                         if command == "quit":
                             running = False
                         else:
                             self.last_command = command
-                    else:
-                        strategy = self.view.execution_error(input, command, values)
                 else:
                     strategy = self.view.parsing_error(input, command, values)
             else:
                 strategy = self.view.command_error(input)
-            print(self.last_command, strategy)
+            #print(self.last_command)
 
 
     def find_command(self, input):

@@ -14,8 +14,8 @@ players.append(Player(**{"last_name": "Brassen", "first_name": "George", "date_o
 players.append(Player(**{"last_name": "Simone", "first_name": "Nina", "date_of_birth": "01/01/1947", "gender": "F", "ranking": 6}))
 players.append(Player(**{"last_name": "Vaughan", "first_name": "Sarah", "date_of_birth": "01/01/1937", "gender": "F", "ranking": 4}))
 players.append(Player(**{"last_name": "Davies", "first_name": "Miles", "date_of_birth": "01/01/1941", "gender": "M", "ranking": 3}))
-players.append(Player(**{"last_name": "Vaughan", "first_name": "Sarah", "date_of_birth": "01/01/1937", "gender": "F"}))
-players.append(Player(**{"last_name": "Vaughan", "first_name": "Sarah", "date_of_birth": "01/01/1937", "gender": "F"}))
+players.append(Player(**{"last_name": "Vaughan", "first_name": "Jeremy", "date_of_birth": "01/01/1936", "gender": "F"}))
+players.append(Player(**{"last_name": "Vaughan", "first_name": "Anna", "date_of_birth": "01/01/1978", "gender": "F"}))
 for player in players:
     player.register(players_table)
 

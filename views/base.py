@@ -22,7 +22,8 @@ class View:
         print(f"Erreur lors de l'execution de la commande: {command} + {values}")
         return None
 
-    def display(self, data):
+    def display(self, name, data):
+        print(name)
         for item in data:
             print(item)
         return None

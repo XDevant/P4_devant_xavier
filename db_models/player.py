@@ -32,6 +32,10 @@ class Player:
         else:
             self.registered = False
 
+    
+    def __repr__(self) -> str:
+        return f"{self.first_name} {self.last_name} id: {self.id} classement: {self.ranking}"
+
     def stringify(self):
         return json.dumps(self, default=lambda o: o.__dict__, separators=(',',': '))
 
