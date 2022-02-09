@@ -1,36 +1,78 @@
+from tinydb import where
 from commands.command import Command
 from db_models.player import Player
+from db_models.tournament import Tournament
 
-
-class Playerlist(Command):
+class Report(Command):
     def __init__(self):
-        self.commands = (".lj", ".lp", ".lc", ".lr")
+        self.commands = (".lt", ".lj", ".lp", ".lc", ".lk", ".ltj", ".ltp", ".ltc", ".ltk", ".ltr", ".ltm")
         self.natural = [["list", "joueur", "player", "classement", "ranking"]]
-        self.values = None
+        self.values = True
         self.name = "Liste des Joueurs"
         self.ranking = False
 
 
     def is_the_one(self, input):
-        if input.startswith(self.commands):
-            if input.startswith(self.commands[2:]):
-                self.ranking = True
-            values = input.split(' ')[-1]
-            return True, values
-        
-        return False, input
+        return super().is_the_one(input)
 
 
-    def parse_values(self, input):
-        return super().parse_values(input)
-
-
-    def execute(self, input, db):
-        players_table = db.table("players")
-        if self.ranking:
-            players = sorted(players_table.all(), key=lambda player: player['ranking'])
-            name = self.name + " (classement)"
+    def parse_values(self, raw_command, raw_values, state):
+        if 't' not in raw_command or raw_command[-1] == 't':
+            return True, {}
         else:
-            players = sorted(players_table.all(), key=lambda player: player['last_name'] + player['first_name'])
-            name = self.name + " (alphabétique)"
-        return name, [Player(**player) for player in players]
+            check = False
+            values = {'id': -1}
+            if raw_values is not None:
+                value = raw_values[0].split('=')[-1].strip()
+                if value.isnumeric():
+                    values['id'] = int(value)
+                    return True, values
+            if state.default_tournament is not None:
+                values['id'] = state.default_tournament
+                return True, values
+            else:
+                return False, values
+
+
+    def execute(self, raw_command, values, db, state):
+        match raw_command:
+            case ".lt":
+                table = db.table("tournaments")
+                tournaments = sorted(table.all(), key=lambda tournament: tournament['date'])
+                name = "Rapport: Liste des Tournois"
+                return name, [Tournament(**tournament) for tournament in tournaments]
+            case ".lj" | ".lp":
+                table = db.table("players")
+                players = sorted(table.all(), key=lambda player: player['last_name'] + player['first_name'])
+                name = "Rapport: Liste des Joueurs (alphabétique)"
+                return name, [Player(**player) for player in players]
+            case ".lc" | ".lk":
+                table = db.table("players")
+                players = sorted(table.all(), key=lambda player: player['ranking'])
+                name = "Rapport: Liste des Joueurs (classement)"
+                return name, [Player(**player) for player in players]
+            case ".ltc" | ".ltk" | ".ltj" | ".ltp":
+                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                name = f"Rapport: Liste des Joueurs, Tournoi {tournament.name} (n°{values['id']})"
+                player_ids = tournament.players
+                if player_ids == []:
+                    return name, ["Aucun joueur inscrit en tournoi"]
+                table = db.table("players")
+                players = table.search(where('id') in player_ids)
+                if raw_command in [".ltc", ".ltk"]:
+                    players.sort(key=lambda player: player['ranking'])
+                    name += " (classement)"
+                else:
+                    players.sort(key=lambda player: player['last_name'] + player['first_name'])
+                    name += " (alphabétique)"
+                return name, [Player(**player) for player in players]
+            case ".ltr":
+                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                rounds = [round.name for round in tournament.round_details]
+                name = f"Rapport: Liste des Rondes, Tournoi {tournament.name} (n°{values['id']})"
+                return name, rounds
+            case ".ltm":
+                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                matchs = tournament.round_details
+                name = f"Rapport: Liste des Matches, Tournoi {tournament.name} (n°{values['id']})"
+                return name, matchs

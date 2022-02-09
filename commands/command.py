@@ -11,17 +11,14 @@ class Command(ABC):
     @abstractmethod
     def is_the_one(self, input):
         if input.startswith(self.commands):
-            values = input.split(' ')[-1]
-            return True, values
-        
-        return False, input
+            return True
+        return False
 
     @abstractmethod
-    def parse_values(self, input):
+    def parse_values(self, raw_command, raw_values, state):
         if not self.values:
             return True, {}
 
     @abstractmethod
-    def execute(self, input, db):
-        print("Sauvé")
+    def execute(self, raw_command, values, db, state):
         return True, None

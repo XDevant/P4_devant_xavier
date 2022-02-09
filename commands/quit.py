@@ -12,10 +12,10 @@ class Quit(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, input):
-        return super().parse_values(input)
+    def parse_values(self, raw_command, raw_values, state):
+        return super().parse_values(raw_command, raw_values, state)
 
 
-    def execute(self, input, db):
+    def execute(self, raw_command, values, db, state):
         print("Sauvé?")
-        return super().execute(input, db)
+        return super().execute(raw_command, values, db, state)

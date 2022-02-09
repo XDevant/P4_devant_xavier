@@ -1,42 +1,73 @@
 from controlers.selector import Selector
 
+class State:
+    def __init__(self):
+        self.last_command = ""
+        self.player_in_process = {}
+        self.tournament_in_process = {}
+        self.default_raw_command = None
+        self.default_tournament = None
+
 
 class Controler:
     def __init__(self, db, view):
         self.db = db
         self.view = view
         self.selector = Selector()
-        self.last_command = None
-
+        self.state = State()
 
     def run(self):
         running = True
         while running:
+            checked = False
             input = self.view.gather_command()
-            command, raw_values = self.find_command(input)
+            raw_command, raw_values = self.parse_input(input)
+            if raw_command is None:
+                raw_command = self.state.default_raw_command
+            command = self.find_command(raw_command)
             if command:
-                check, values = getattr(self.selector, command).parse_values(raw_values)
-                if check:
-                    try:
-                        name, data = getattr(self.selector, command).execute(values, self.db)
-                    except Exception:
-                        strategy = self.view.execution_error(input, command, values)
-                    else:
-                        strategy = self.view.display(name, data)
-                        if command == "quit":
-                            running = False
-                        else:
-                            self.last_command = command
-                else:
-                    strategy = self.view.parsing_error(input, command, values)
+                checked, values = getattr(self.selector, command).parse_values(raw_command, raw_values, self.state)
             else:
                 strategy = self.view.command_error(input)
+                continue
+            if checked:
+                try:
+                    name, data = getattr(self.selector, command).execute(raw_command, values, self.db, self.state)
+                except Exception:
+                    strategy = self.view.execution_error(input, command, values)
+                else:
+                    strategy = self.view.display(name, data)
+                    if command == "quit":
+                        running = False
+                    else:
+                        self.state.last_command = command
+            else:
+                strategy = self.view.parsing_error(input, command, raw_values)
+                continue
+ 
             #print(self.last_command)
 
 
-    def find_command(self, input):
-        for command in self.selector:
-            result, values = getattr(self.selector, command).is_the_one(input)
-            if result:
-                return command, values
-        return None, None
+    def parse_input(self, input):
+        base = 0
+        splited_input = input.split(' ')
+        if input.startswith('.'):
+            raw_command = splited_input[0]
+            base = 1
+        else:
+            raw_command = None
+        if len(splited_input) > base:
+            raw_values = ' '.join(splited_input[base:]).split(',')
+            raw_values = [value.strip() for value in raw_values]
+        else:
+            raw_values = None
+        return (raw_command, raw_values)
+
+
+    def find_command(self, raw_command):
+        if raw_command:
+            for command in self.selector:
+                result = getattr(self.selector, command).is_the_one(raw_command)
+                if result:
+                    return command
+        return None

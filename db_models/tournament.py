@@ -51,12 +51,19 @@ class Tournament:
         else:
             self.registered = False
 
+
+    def __repr__(self) -> str:
+        return f"Tournoi n°{self.id}: {self.name} à {self.place} le {self.date}"
+
+
     def stringify(self):
         return json.dumps(self, default=lambda o: o.__dict__, separators=(',',': '))
+
 
     def serialize(self):
         stringified = self.stringify()
         return json.loads(stringified)
+
 
     def register(self, table):
         if not self.id:
