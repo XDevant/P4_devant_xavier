@@ -8,8 +8,6 @@ class Report(Command):
         self.commands = (".lt", ".lj", ".lp", ".lc", ".lk", ".ltj", ".ltp", ".ltc", ".ltk", ".ltr", ".ltm")
         self.natural = [["list", "joueur", "player", "classement", "ranking"]]
         self.values = True
-        self.name = "Liste des Joueurs"
-        self.ranking = False
 
 
     def is_the_one(self, input):
@@ -26,7 +24,7 @@ class Report(Command):
                 value = raw_values[0].split('=')[-1].strip()
                 if value.isnumeric():
                     values['id'] = int(value)
-                    return True, values
+                    return int(value) > 0, values
             if state.default_tournament is not None:
                 values['id'] = state.default_tournament
                 return True, values
@@ -58,11 +56,15 @@ class Report(Command):
                 if player_ids == []:
                     return name, ["Aucun joueur inscrit en tournoi"]
                 table = db.table("players")
-                players = table.search(where('id') in player_ids)
+                players = []
+                for id in player_ids:
+                    players.append(table.get(doc_id=id))
+                print(players)
                 if raw_command in [".ltc", ".ltk"]:
                     players.sort(key=lambda player: player['ranking'])
                     name += " (classement)"
                 else:
+                    print("b")
                     players.sort(key=lambda player: player['last_name'] + player['first_name'])
                     name += " (alphabétique)"
                 return name, [Player(**player) for player in players]

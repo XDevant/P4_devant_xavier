@@ -22,7 +22,7 @@ class Player:
         if 'ranking' in kwargs:
             self.ranking =  kwargs['ranking']
         else:
-            self.ranking = None
+            self.ranking = 'auto'
         if 'id' in kwargs:
             self.id =  kwargs['id']
         else:
@@ -46,7 +46,7 @@ class Player:
     def register(self, table):
         if not self.id:
             self.id = 1 + len(table)
-        if not self.ranking:
+        if self.ranking == 'auto':
             self.ranking = self.id
         if not self.registered:
             self.registered = True

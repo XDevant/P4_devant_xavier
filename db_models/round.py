@@ -5,7 +5,7 @@ class Round:
         if 'name' in kwargs:
             self.name =  kwargs['name']
         else:
-            self.name = None
+            self.name = "Round "
         if 'matches' in kwargs:
             self.matches =  kwargs['matches']
         else:
@@ -18,6 +18,17 @@ class Round:
             self.ended =  kwargs['ended']
         else:
             self.ended = None
+
+
+    def __iter__(self):
+        return self.matches.__iter__()
+
+
+    def __str__(self):
+        look = self.name + ": "
+        for match in self:
+            look += str(match)
+        return look
 
     def start(self):
         if self.started:

@@ -5,8 +5,14 @@ class State:
         self.last_command = ""
         self.player_in_process = {}
         self.tournament_in_process = {}
+        self.player_update_in_process = {}
+        self.tournament_update_in_process = {}
+        self.round_update_in_process = {}
         self.default_raw_command = None
+        self.default_player = None
         self.default_tournament = None
+        self.menu = None
+        self.next_command = None
 
 
 class Controler:
@@ -25,11 +31,13 @@ class Controler:
             if raw_command is None:
                 raw_command = self.state.default_raw_command
             command = self.find_command(raw_command)
+
             if command:
                 checked, values = getattr(self.selector, command).parse_values(raw_command, raw_values, self.state)
             else:
                 strategy = self.view.command_error(input)
                 continue
+
             if checked:
                 try:
                     name, data = getattr(self.selector, command).execute(raw_command, values, self.db, self.state)
@@ -67,7 +75,11 @@ class Controler:
     def find_command(self, raw_command):
         if raw_command:
             for command in self.selector:
-                result = getattr(self.selector, command).is_the_one(raw_command)
+                result = getattr(self.selector, command.lower()).is_the_one(raw_command)
                 if result:
-                    return command
+                    return command.lower()
         return None
+
+
+    def new_round(self, tournament):
+        pass
