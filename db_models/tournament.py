@@ -6,6 +6,11 @@ from db_models.round import Round
 
 class Tournament:
     def __init__(self, **kwargs):
+        self._dict = {'name': 'nom', 'place': 'lieu', 'date': 'date', 'description': 'description', 'rounds': 'rondes', 'round_details': 'détail_rondes', 'players': 'joueurs', 'id': 'id', 'round': 'ronde', 'registered': 'enregistré', 'started': 'démarré', 'finished': 'terminé'}
+        for kwarg in kwargs.keys():
+            if kwarg in self._dict.keys():
+                setattr(self, kwarg, kwargs[kwarg])
+        
         if 'name' in kwargs:
             self.name =  kwargs['name']
         else:
@@ -26,10 +31,10 @@ class Tournament:
             self.rounds =  kwargs['rounds']
         else:
             self.rounds = 4
-        if 'timer' in kwargs:
-            self.timer =  kwargs['timer']
+        if 'type' in kwargs:
+            self.type =  kwargs['timer']
         else:
-            self.timer = 'blitz'
+            self.type = 'blitz'
         if 'round_details' in kwargs:
             self.round_details = [Round(**round_dict) for round_dict in kwargs['round_details']] # need chk
         else:
@@ -98,7 +103,6 @@ class Tournament:
     def complete_update(self, table):
         if self.registered:
             serialized = self.serialize()
-            print(serialized)
             table.update(Document(serialized, doc_id=self.id))
 
     def add_player(self, id):

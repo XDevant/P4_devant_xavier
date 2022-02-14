@@ -1,10 +1,13 @@
 from controlers.selector import Selector
+from controlers.sprite import TournamentSprite
+
 
 class State:
     def __init__(self):
         self.last_command = ""
         self.player_in_process = {}
         self.tournament_in_process = {}
+        self.round_in_process = {}
         self.player_update_in_process = {}
         self.tournament_update_in_process = {}
         self.round_update_in_process = {}
@@ -45,6 +48,9 @@ class Controler:
                     strategy = self.view.execution_error(input, command, values)
                 else:
                     strategy = self.view.display(name, data)
+                    if command in ["starttournament", "certifyround"]:
+                        self.state.default_tournament = values["id"]
+                        self.new_round(data[0], self.db)
                     if command == "quit":
                         running = False
                     else:
@@ -81,5 +87,8 @@ class Controler:
         return None
 
 
-    def new_round(self, tournament):
-        pass
+    def new_round(self, tournament, db):
+        active_tournament = TournamentSprite(tournament, db)
+        matches = active_tournament.generate_matches()
+        self.state.round_in_process['name'] = f"Round {active_tournament.round + 1}"
+        self.state.round_in_process['matches'] = matches

@@ -16,7 +16,7 @@ class Command(ABC):
 
     @abstractmethod
     def parse_values(self, raw_command, raw_values, state):
-        if not self.values:
+        if self.values is None:
             return True, {}
 
     @abstractmethod

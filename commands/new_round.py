@@ -1,9 +1,10 @@
+from datetime import datetime
 from commands.command import Command
 from db_models.tournament import Tournament
 from db_models.round import Round
 
 
-class StartTournament(Command):
+class NewRound(Command):
     def __init__(self):
         self.commands = (".rd", ".rs")
         self.natural = [["ronde", "démarrer", "round" "start"]]
@@ -19,7 +20,15 @@ class StartTournament(Command):
             values = {"name": raw_values[0].split('=')[-1]}
             if len(values["name"]) > 0:
                 return True, values
-        return True, {"name": "Round "}
+        return True, {"name": state.round_in_process["name"]}
 
     def execute(self, raw_command, values, db, state):
-        pass
+        round = Round(name=values["name"])
+        round.add_matches(*state.round_in_process["matches"])
+        round.start()
+        table = db.table("tournaments")
+        tournament = Tournament(**table.get(doc_id=state.default_tournament))
+        tournament.new_round(round)
+        tournament.complete_update(table)
+        print(round)
+        return "Nouvelle ronde démarrée:", [round]

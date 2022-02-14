@@ -23,10 +23,12 @@ class TournamentSprite:
     def generate_matches(self):
         matches = []
         matches_len = len(self.players) // 2
-        if self.round == 1:
+        if self.round == 0:
+            self.sprites.sort(key=lambda sprite: sprite.ranking)
             for i in range(matches_len):
                 matches.append([self.sprites[i].id, self.sprites[i + matches_len].id])
-        if self.round > 1:
+        if self.round > 0:
+            self.sprites.sort(key=lambda sprite: sprite.ranking * 10 + sprite.score / self.rounds)
             unmatched_players = self.players
             while len(matches) < matches_len:
                 new_match = []
@@ -43,7 +45,7 @@ class TournamentSprite:
 class PlayerSprite:
     def __init__(self, tournament, player_id, db):
         self.id = player_id
-        self.ranking =  db.table("tournaments").search(where('id') == player_id)["ranking"]
+        self.ranking =  db.table("players").get(doc_id=player_id)["ranking"]
         self.score = 0
         self.played= []
         if tournament.round > 1:
