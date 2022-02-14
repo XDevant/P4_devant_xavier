@@ -1,5 +1,4 @@
 from commands.command import Command
-from db_models.player import Player
 from db_models.tournament import Tournament
 
 
@@ -31,9 +30,9 @@ class UpdateTournament(Command):
         name = "Nouveau joueur inscrit:"
         table = db.table("tournaments")
         tournament = table.get(doc_id=values['tournament_id'])
-        new_item = Tournament(**tournament)
+        new_item = Tournament(db, **tournament)
         validation = new_item.add_player(values["player_id"])
         if not validation:
             return "Joueur déjà inscrit", []
-        new_item.complete_update(table)
+        new_item.complete_update(db)
         return name, [new_item]

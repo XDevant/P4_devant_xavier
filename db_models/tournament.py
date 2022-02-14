@@ -1,16 +1,10 @@
-import json
 from tinydb.table import Document
 from datetime import date
 from db_models.round import Round
 
 
 class Tournament:
-    def __init__(self, **kwargs):
-        self._dict = {'name': 'nom', 'place': 'lieu', 'date': 'date', 'description': 'description', 'rounds': 'rondes', 'round_details': 'détail_rondes', 'players': 'joueurs', 'id': 'id', 'round': 'ronde', 'registered': 'enregistré', 'started': 'démarré', 'finished': 'terminé'}
-        for kwarg in kwargs.keys():
-            if kwarg in self._dict.keys():
-                setattr(self, kwarg, kwargs[kwarg])
-        
+    def __init__(self, db, **kwargs):
         if 'name' in kwargs:
             self.name =  kwargs['name']
         else:
@@ -32,11 +26,12 @@ class Tournament:
         else:
             self.rounds = 4
         if 'type' in kwargs:
-            self.type =  kwargs['timer']
+            self.type =  kwargs['type']
         else:
             self.type = 'blitz'
-        if 'round_details' in kwargs:
-            self.round_details = [Round(**round_dict) for round_dict in kwargs['round_details']] # need chk
+        if 'round_details' in kwargs and len(kwargs['round_details']) > 0:
+            round_list = [db.table("rounds").get(doc_id=id) for id in kwargs['round_details']]
+            self.round_details = [Round(**round) for round in round_list] # need chk
         else:
             self.round_details = []
         if 'players' in kwargs:
@@ -70,40 +65,45 @@ class Tournament:
         if not self.registered:
             second_part = f"Le tournoi n'est pas enregistré et donc fermé aux inscriptions. Taper (.te) pour l'enregistrer"
         else:
-            second_part = f"Il y a {len(self.players)} joueurs inscrits."
+            second_part = f"Il y a {len(self.players)} joueurs inscrits"
+            if len(self.players) > 0:
+                second_part += ": " + str(self.players) + ". "
+            else:
+                second_part += '.'
         if not self.started:
-            third_part = "Le tournoi n'est démarré. Taper (.td) pour le démarrer"
+            third_part = "Le tournoi n'est pas démarré"
         elif self.finished:
             third_part = f"Le tournoi est terminé"
         else:
             third_part = f"Le tournoi est démarré."
+        if len(self.round_details) > 0:
+            third_part += str(self.round_details)
         return first_part + second_part + third_part
 
 
-    def stringify(self):
-        return json.dumps(self, default=lambda o: o.__dict__, separators=(',',': '))
+    def serialize(self, db):
+        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
+        serialized = {key : getattr(self, key) for key in keys}
+        serialized['round_details'] = [round.complete_update(db) for round in self.round_details]
+        return serialized
 
 
-    def serialize(self):
-        stringified = self.stringify()
-        return json.loads(stringified)
-
-
-    def register(self, table):
+    def register(self, db):
+        table = db.table("tournaments")
         if not self.id:
             self.id = len(table) + 1
         if not self.registered:
             self.registered = True
-            serialized = self.serialize()
+            serialized = self.serialize(db)
             table.insert(Document(serialized, doc_id=self.id))
             return True
         else:
             return False
 
-    def complete_update(self, table):
+    def complete_update(self, db):
         if self.registered:
-            serialized = self.serialize()
-            table.update(Document(serialized, doc_id=self.id))
+            serialized = self.serialize(db)
+            db.table("tournaments").update(Document(serialized, doc_id=self.id))
 
     def add_player(self, id):
         if id not in self.players:

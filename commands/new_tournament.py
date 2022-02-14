@@ -36,6 +36,6 @@ class NewTournament(Command):
 
     def execute(self, raw_command, values, db, state):
         name = "Nouveau Tournoi:"
-        new_item = Tournament(**values)
-        new_item.register(db.table("tournaments"))
+        new_item = Tournament(db, **values)
+        new_item.register(db)
         return name, [new_item]

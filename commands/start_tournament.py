@@ -26,7 +26,7 @@ class StartTournament(Command):
     def execute(self, raw_command, values, db, state):
         name = "Tournoi démarré:"
         table = db.table("tournaments")
-        tournament = Tournament(**table.get(doc_id=values["id"]))
+        tournament = Tournament(db, **table.get(doc_id=values["id"]))
         if len(tournament.players) % 2 != 0:
             return "Nombre d'inscrits impair !", []
         elif len(tournament.players) <= tournament.rounds:
@@ -37,7 +37,7 @@ class StartTournament(Command):
             return "Tournoi non enregistré", []
         else:
             tournament.started = True
-            tournament.complete_update(table)
+            tournament.complete_update(db)
             return name, [tournament]
 
 

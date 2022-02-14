@@ -1,4 +1,5 @@
 from datetime import datetime
+from tinydb.table import Document
 
 
 class Round:
@@ -7,6 +8,10 @@ class Round:
             self.name =  kwargs['name']
         else:
             self.name = "Round "
+        if 'tournament' in kwargs:
+            self.tournament = kwargs['tournament']
+        else:
+            self.tournament = None
         if 'matches' in kwargs:
             self.matches =  kwargs['matches']
         else:
@@ -14,11 +19,15 @@ class Round:
         if 'started' in kwargs:
             self.started =  kwargs['started']
         else:
-            self.started = None
+            self.started = False
         if 'ended' in kwargs:
             self.ended =  kwargs['ended']
         else:
-            self.ended = None
+            self.ended = False
+        if 'id' in kwargs:
+            self.id =  kwargs['id']
+        else:
+            self.id = False
 
 
     def __iter__(self):
@@ -27,11 +36,37 @@ class Round:
 
     def __repr__(self):
         look = self.name + ": "
+        i = 1
         for match in self:
-            i = 1
-            look += "Match {i}: " + str(match)
+            look += f", Match {i}: " + str(match)
             i += 1
         return look
+
+
+    def serialize(self):
+        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
+        serialized = {key : getattr(self, key) for key in keys}
+        return serialized
+
+
+    def register(self, table):
+        if not self.id:
+            self.id = len(table) + 1
+        if not self.started:
+            self.started = True
+            serialized = self.serialize()
+            table.insert(Document(serialized, doc_id=self.id))
+            return True
+        else:
+            return False
+
+
+    def complete_update(self, db):
+        if self.started:
+            serialized = self.serialize()
+            print(serialized)
+            db.table("rounds").update(Document(serialized, doc_id=self.id))
+        return self.id
 
 
     def start(self):

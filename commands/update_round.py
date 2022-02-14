@@ -31,7 +31,7 @@ class UpdateRound(Command):
         name = "Nouveau résultat:"
         table = db.table("tournaments")
         tournament = table.get(doc_id=values['tournament_id'])
-        tournament = Tournament(**tournament)
+        tournament = Tournament(db, **tournament)
         round = tournament.round_details[-1]
         i, j = round.find_indexes(values["player_id"])
         if i < 0:
@@ -50,5 +50,5 @@ class UpdateRound(Command):
                 points_a = round.matches[i][0][1]
         round.update_match(i, points_a, points_b)
         tournament.round_details[-1] = round
-        tournament.complete_update(table)
+        tournament.complete_update(db)
         return name, [tournament]

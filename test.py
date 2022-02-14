@@ -21,5 +21,5 @@ for player in players:
 
 tournaments_table = db.table("tournaments")
 tournaments_table.truncate()
-tournament1 = Tournament(**{"name": "First Tournament", "place": "Madisson Square Garden", "date": str(date.today()), "timer": "bullet"})
-tournament1.register(tournaments_table)
+tournament1 = Tournament(db, **{"name": "First Tournament", "place": "Madisson Square Garden", "date": str(date.today()), "timer": "bullet"})
+tournament1.register(db)
