@@ -53,27 +53,28 @@ class Round:
         if not self.id:
             self.id = len(table) + 1
         if not self.started:
-            self.started = True
+            self.start()
             serialized = self.serialize()
-            table.insert(Document(serialized, doc_id=self.id))
-            return True
+            print(serialized)
+            return table.insert(Document(serialized, doc_id=self.id))
         else:
-            return False
+            return -1
 
 
     def complete_update(self, db):
         if self.started:
             serialized = self.serialize()
-            print(serialized)
             db.table("rounds").update(Document(serialized, doc_id=self.id))
-        return self.id
+            return self.id
+        else:
+            return self.register(db.table("rounds"))
 
 
     def start(self):
         if self.started:
             return False
         else:
-            self.started = datetime.today()
+            self.started = str(datetime.today())
             return True
 
 
@@ -86,7 +87,7 @@ class Round:
         if self.ended or not check:
             return False
         else:
-            self.ended = datetime.today()
+            self.ended = str(datetime.today())
             return True
 
 

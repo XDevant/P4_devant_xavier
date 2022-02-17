@@ -52,8 +52,10 @@ class CertifyRound(StartTournament):
     def execute(self, raw_command, values, db, state):
         name = "Ronde validée:"
         table = db.table("tournaments")
-        tournament = Tournament(**table.get(doc_id=values["id"]))
-        if True:
+        tournament = Tournament(db, **table.get(doc_id=values["id"]))
+        check = tournament.round_details[-1].validate()
+        if check:
+            tournament.complete_update(db)
             return name, [tournament]
         else:
             return "Résultats manquants:", []

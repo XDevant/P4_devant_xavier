@@ -8,4 +8,5 @@ from commands.update_player import UpdatePlayer
 from commands.update_tournament import UpdateTournament
 from commands.update_round import UpdateRound
 from commands.start_tournament import StartTournament
+from commands.start_tournament import CertifyRound
 from commands.new_round import NewRound

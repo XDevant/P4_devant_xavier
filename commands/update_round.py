@@ -24,7 +24,10 @@ class UpdateRound(Command):
 
 
     def check_value(self, key, value):
-        return int(value) > 0
+        if "id" in key:
+            return int(value) > 0
+        else:
+            return value <= 1 and value >= 0
 
 
     def execute(self, raw_command, values, db, state):

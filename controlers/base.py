@@ -42,11 +42,12 @@ class Controler:
                 continue
 
             if checked:
-                try:
+                #try:
                     name, data = getattr(self.selector, command).execute(raw_command, values, self.db, self.state)
-                except Exception:
-                    strategy = self.view.execution_error(input, command, values)
-                else:
+                #except Exception as err:
+                #    print(type(err))
+                #    strategy = self.view.execution_error(input, command, values)
+                #else:
                     strategy = self.view.display(name, data)
                     if command in ["starttournament", "certifyround"]:
                         self.state.default_tournament = values["id"]
@@ -89,6 +90,8 @@ class Controler:
 
     def new_round(self, tournament, db):
         active_tournament = TournamentSprite(tournament, db)
+        print(active_tournament)
         matches = active_tournament.generate_matches()
+        print(matches)
         self.state.round_in_process['name'] = f"Round {active_tournament.round + 1}"
         self.state.round_in_process['matches'] = matches

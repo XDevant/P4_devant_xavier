@@ -23,12 +23,10 @@ class NewRound(Command):
         return True, {"name": state.round_in_process["name"]}
 
     def execute(self, raw_command, values, db, state):
-        round = Round(name=values["name"])
+        round = Round(name=values["name"], tournament=state.default_tournament)
         round.add_matches(*state.round_in_process["matches"])
         table = db.table("tournaments")
         tournament = Tournament(db, **table.get(doc_id=state.default_tournament))
         tournament.new_round(round)
-        round.register(db.table("rounds"))
         tournament.complete_update(db)
-        print(round)
         return "Nouvelle ronde démarrée:", [round]

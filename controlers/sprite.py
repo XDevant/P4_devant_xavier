@@ -12,6 +12,10 @@ class TournamentSprite:
         self.round_details = tournament.round_details
         self.sprites = [PlayerSprite(tournament, player, db) for player in self.players]
 
+    
+    def __repr__(self):
+        return f"Tournoi: {self.id}, en {self.rounds} rondes. Ronde {self.round + 1}: {self.sprites}"
+
 
     def sort_players(self):
         if self.round == 1:
@@ -28,17 +32,18 @@ class TournamentSprite:
             for i in range(matches_len):
                 matches.append([self.sprites[i].id, self.sprites[i + matches_len].id])
         if self.round > 0:
-            self.sprites.sort(key=lambda sprite: sprite.ranking * 10 + sprite.score / self.rounds)
-            unmatched_players = self.players
+            self.sprites.sort(key=lambda sprite: - sprite.score * 10 - 1 / sprite.ranking)
+            unmatched_players = self.sprites
             while len(matches) < matches_len:
-                new_match = []
+                first_player = unmatched_players.pop(0)
+                new_match = [first_player.id]
                 for sprite in self.sprites:
-                    if sprite.id in unmatched_players:
+                    if sprite in unmatched_players and sprite.id not in first_player.played:
                         new_match.append(sprite.id)
-                        index = unmatched_players.index(sprite.id)
+                        matches.append(new_match)
+                        index = unmatched_players.index(sprite)
                         unmatched_players.pop(index)
-                        if len(new_match) == 2:
-                            break
+                        break
         return matches
         
 
@@ -48,12 +53,16 @@ class PlayerSprite:
         self.ranking =  db.table("players").get(doc_id=player_id)["ranking"]
         self.score = 0
         self.played= []
-        if tournament.round > 1:
-            for i in range(1, tournament.round):
-                for match in tournament.round_details[i - 1]:
+        if tournament.round > 0:
+            for i in range(0, tournament.round):
+                for match in tournament.round_details[i]:
                     if match[0][0] == self.id:
                         self.score += match[0][1]
                         self.played.append(match[1][0])
                     if match[1][0] == self.id:
                         self.score += match[1][1]
                         self.played.append(match[0][0])
+
+
+    def __repr__(self):
+        return f"Id:{self.id}, rang: {self.ranking}, score: {self.score} TYours précédents: {self.played}"

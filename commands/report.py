@@ -38,7 +38,7 @@ class Report(Command):
                 table = db.table("tournaments")
                 tournaments = sorted(table.all(), key=lambda tournament: tournament['date'])
                 name = "Rapport: Liste des Tournois"
-                return name, [Tournament(**tournament) for tournament in tournaments]
+                return name, [Tournament(db, **tournament) for tournament in tournaments]
             case ".lj" | ".lp":
                 table = db.table("players")
                 players = sorted(table.all(), key=lambda player: player['last_name'] + player['first_name'])
@@ -50,7 +50,7 @@ class Report(Command):
                 name = "Rapport: Liste des Joueurs (classement)"
                 return name, [Player(**player) for player in players]
             case ".ltc" | ".ltk" | ".ltj" | ".ltp":
-                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                tournament = Tournament(db, **db.table("tournaments").get(doc_id=values['id']))
                 name = f"Rapport: Liste des Joueurs, Tournoi {tournament.name} (n°{values['id']})"
                 player_ids = tournament.players
                 if player_ids == []:
@@ -69,12 +69,12 @@ class Report(Command):
                     name += " (alphabétique)"
                 return name, [Player(**player) for player in players]
             case ".ltr":
-                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                tournament = Tournament(db, **db.table("tournaments").get(doc_id=values['id']))
                 rounds = [round.name for round in tournament.round_details]
                 name = f"Rapport: Liste des Rondes, Tournoi {tournament.name} (n°{values['id']})"
                 return name, rounds
             case ".ltm":
-                tournament = Tournament(**db.table("tournaments").get(doc_id=values['id']))
+                tournament = Tournament(db, **db.table("tournaments").get(doc_id=values['id']))
                 matchs = tournament.round_details
                 name = f"Rapport: Liste des Matches, Tournoi {tournament.name} (n°{values['id']})"
                 return name, matchs
