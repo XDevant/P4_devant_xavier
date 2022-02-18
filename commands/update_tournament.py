@@ -22,10 +22,6 @@ class UpdateTournament(Command):
         return self.load_values(raw_values, new_dict, saved_dict)
 
 
-    def check_value(self, key, value):
-        return int(value) > 0
-
-
     def execute(self, raw_command, values, db, state):
         name = "Nouveau joueur inscrit:"
         table = db.table("tournaments")

@@ -6,8 +6,8 @@ from db_models.tournament import Tournament
 class NewTournament(Command):
     def __init__(self):
         self.commands = (".nt")
-        self.natural = [["nouveau", "tournoi", "new", "tournament"]]
-        self.values = True
+        self.natural = [["nouveau", "new"], ["tournoi", "tournament"]]
+        self.values = {"name": None, "place": None, "date": None, "description": None, "rule": None, "rounds": 4}
 
 
     def is_the_one(self, input):
@@ -18,20 +18,9 @@ class NewTournament(Command):
         if raw_values is None:
             return False, {}
         check = True
-        new_dict = {"name": None, "place": None, "date": None, "description": None, "rule": None, "rounds": 4}
+        new_dict = self.values
         saved_dict = state.tournament_in_process
         return self.load_values(raw_values, new_dict, saved_dict)
-
-
-    def check_value(self, key, value):
-        if key == "rounds":
-            return value.isnumeric() and int(value) > 0
-        elif "date" in key:
-            return True
-        elif key == "rule":
-            return value.lower() in ["blitz", "bullet", "coup rapide"]
-        else:
-            return len(value) > 0
 
 
     def execute(self, raw_command, values, db, state):

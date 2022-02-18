@@ -1,21 +1,6 @@
 from controlers.selector import Selector
 from controlers.sprite import TournamentSprite
-
-
-class State:
-    def __init__(self):
-        self.last_command = ""
-        self.player_in_process = {}
-        self.tournament_in_process = {}
-        self.round_in_process = {}
-        self.player_update_in_process = {}
-        self.tournament_update_in_process = {}
-        self.round_update_in_process = {}
-        self.default_raw_command = None
-        self.default_player = None
-        self.default_tournament = None
-        self.menu = None
-        self.next_command = None
+from controlers.state import State
 
 
 class Controler:
@@ -42,12 +27,12 @@ class Controler:
                 continue
 
             if checked:
-                #try:
+                try:
                     name, data = getattr(self.selector, command).execute(raw_command, values, self.db, self.state)
-                #except Exception as err:
-                #    print(type(err))
-                #    strategy = self.view.execution_error(input, command, values)
-                #else:
+                except Exception as err:
+                    print(type(err))
+                    strategy = self.view.execution_error(input, command, values)
+                else:
                     strategy = self.view.display(name, data)
                     if command in ["starttournament", "certifyround"]:
                         self.state.default_tournament = values["id"]
@@ -93,5 +78,5 @@ class Controler:
         print(active_tournament)
         matches = active_tournament.generate_matches()
         print(matches)
-        self.state.round_in_process['name'] = f"Round {active_tournament.round + 1}"
-        self.state.round_in_process['matches'] = matches
+        self.state.new_round['name'] = f"Round {active_tournament.round + 1}"
+        self.state.new_round['matches'] = matches

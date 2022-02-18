@@ -4,9 +4,9 @@ from db_models.player import Player
 
 class NewPlayer(Command):
     def __init__(self):
-        self.commands = (".nj", ".np")
-        self.natural = [["nouveau", "joueur", "new", "player"]]
-        self.values = True
+        self.commands = (".nj", ".np", ".jn", ".pn")
+        self.natural = [["nouveau", "new"], ["joueur", "player"]]
+        self.values = {"last_name": None, "first_name": None, "date_of_birth": None, "gender": None, "ranking": 'auto'}
 
 
     def is_the_one(self, input):
@@ -16,18 +16,9 @@ class NewPlayer(Command):
     def parse_values(self, raw_command, raw_values, state):
         if raw_values is None:
             return False, {}
-        new_dict = {"last_name": None, "first_name": None, "date_of_birth": None, "gender": None, "ranking": 'auto'}
+        new_dict = self.values
         saved_dict = state.player_in_process
         return self.load_values(raw_values, new_dict, saved_dict)
-
-
-    def check_value(self, key, value):
-        if key == "ranking":
-            return value.isnumeric() and int(value) > 0
-        elif "date" in key:
-            return True
-        else:
-            return len(value) > 0
 
 
     def execute(self, raw_command, values, db, state):

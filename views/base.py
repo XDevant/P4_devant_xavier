@@ -7,12 +7,19 @@ class View:
         self.report = Report()
 
     def gather_command(self):
-        answer = input()
+        answer = input("Entrez une commande:")
         return answer
+
+
+    def gather_value(self, message):
+        answer = input(message)
+        return answer
+
 
     def command_error(self, input):
         print(f"Aucune commande trouvé pour {input}")
         return None
+
 
     def parsing_error(self, input, command, values):
         print(f"Valeurs fournies incompatibles avec la commande: {command} + {values}")

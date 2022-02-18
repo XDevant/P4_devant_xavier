@@ -14,15 +14,11 @@ class UpdatePlayer(Command):
 
 
     def parse_values(self, raw_command, raw_values, state):
-        if raw_values is None:
-            return False, {}
         new_dict = self.values
         saved_dict = state.player_update_in_process
+        if raw_values is None:
+            return False, saved_dict
         return self.load_values(raw_values, new_dict, saved_dict)
-
-
-    def check_value(self, key, value):
-        return int(value) > 0
 
 
     def execute(self, raw_command, values, db, state):
