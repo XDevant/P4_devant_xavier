@@ -1,19 +1,7 @@
 from abc import ABC, abstractmethod
+from controlers.language import key_translation
 
 
-input_key_translation = {"name": ["nom", "name"],
-                         "first_name": ["prénom", "first name", "prenom"],
-                         "last_name": ["nom", "name", "last name"],
-                         "date": ["date"],
-                         "date_of_birth": ["date de naissance", "date of birth"],
-                         "score": ["score"],
-                         "ranking": ["classement", "rang", "rank", "ranking"],
-                         "gender": ["genre", "gender"],
-                         "rounds": ["rondes", "rounds"],
-                         "id": ["identifiant", "id",  "joueur", "player", "tournoi", "tournament", "round", "ronde"],
-                         "player_id": ["identifiant", "id", "joueur", "player"],
-                         "tournament_id": ["identifiant", "id", "tournoi", "tournament"]
-                         }
 
 class Command(ABC):
     def __init__(self):
@@ -31,7 +19,8 @@ class Command(ABC):
     @abstractmethod
     def parse_values(self, raw_command, raw_values, state):
         if self.values is None:
-            return True, {}
+            return True, {}, []
+
 
     @abstractmethod
     def execute(self, raw_command, values, db, state):
@@ -71,13 +60,17 @@ class Command(ABC):
                     new_dict[key] = value
                     break
             if new_dict[key] is None:
-                check = False
-        return check, new_dict
+                if check:
+                    errors.append(key)
+                    check = False
+        if check:
+            errors.append([])
+        return check, new_dict, errors
 
 
     def translate_key(self, new_key, keys):
         for key in keys:
-            if new_key.lower().strip() in input_key_translation[key]:
+            if new_key.lower().strip() in key_translation[key]:
                 return key
         return None
 

@@ -13,27 +13,34 @@ class Controler:
     def run(self):
         running = True
         while running:
-            checked = False
-            input = self.view.gather_command()
-            raw_command, raw_values = self.parse_input(input)
+            if self.state.menu is None:
+                input = self.view.gather_command()
+                raw_command, raw_values = self.parse_input(input)
+            else:
+                input = self.view.gather_value(self.state.next_key)
+                raw_command, raw_values = self.parse_input(input)
             if raw_command is None:
-                raw_command = self.state.default_raw_command
-            command = self.find_command(raw_command)
+                if self.state.default_command is None:
+                    command = None
+                else:
+                    command = "".join(self.state.default_command.split("_"))
+            else:
+                command = self.find_command(raw_command)
 
             if command:
-                checked, values = getattr(self.selector, command).parse_values(raw_command, raw_values, self.state)
+                values, errors = getattr(self.selector, command).parse_values(raw_command, raw_values, self.state)
             else:
-                strategy = self.view.command_error(input)
+                self.view.command_error(input)
                 continue
 
-            if checked:
+            if errors[-1] == []:
                 try:
                     name, data = getattr(self.selector, command).execute(raw_command, values, self.db, self.state)
                 except Exception as err:
                     print(type(err))
-                    strategy = self.view.execution_error(input, command, values)
+                    self.view.execution_error(command, values, errors)
                 else:
-                    strategy = self.view.display(name, data)
+                    self.view.display(name, data)
                     if command in ["starttournament", "certifyround"]:
                         self.state.default_tournament = values["id"]
                         self.new_round(data[0], self.db)
@@ -42,10 +49,7 @@ class Controler:
                     else:
                         self.state.last_command = command
             else:
-                strategy = self.view.parsing_error(input, command, raw_values)
-                continue
- 
-            #print(self.last_command)
+                self.view.parsing_error(command, values, errors)
 
 
     def parse_input(self, input):
@@ -60,7 +64,7 @@ class Controler:
             raw_values = ' '.join(splited_input[base:]).split(',')
             raw_values = [value.strip() for value in raw_values]
         else:
-            raw_values = None
+            raw_values = []
         return (raw_command, raw_values)
 
 
