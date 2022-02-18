@@ -49,6 +49,10 @@ class Controler:
                     else:
                         self.state.last_command = command
             else:
+                if command == self.state.last_command:
+                    self.view.muted = True
+                else:
+                    self.view.muted = False
                 self.view.parsing_error(command, values, errors)
 
 

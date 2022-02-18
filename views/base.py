@@ -29,6 +29,8 @@ class View:
 
     def parsing_error(self, command, values, errors):
         print(f"\n Valeurs fournies insuffisantes pour la commande: {self.translation.commands[command][0]}")
+        if self.verbose and not self.muted:
+            print(*self.help.values[:3])
         if len(errors) > 1:
             print(*errors[:-1])
         display_values = {}
@@ -36,9 +38,7 @@ class View:
             if value is None:
                 value = "?"
             display_values[self.translation.keys[key][0]] = value
-        print("\n Valeurs actuelles:", display_values)
-        if self.verbose and not self.muted:
-            print(*self.help.values[:3])
+        print("Valeurs actuelles: ", display_values, "\n ")
         return None
 
     def execution_error(self, command, values, errors):
