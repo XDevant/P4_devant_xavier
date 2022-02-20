@@ -44,6 +44,6 @@ class NewRound(Command):
             state.active_tournament = tournament.id
             feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
 
-        feedback["name"] = "Nouvelle ronde démarrée:"
+        feedback["title"] = "Nouvelle ronde démarrée:"
         feedback["data"] = [round]
         return feedback

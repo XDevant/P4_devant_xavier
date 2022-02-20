@@ -27,15 +27,21 @@ class ListTournamentPlayers(Command):
 
     def execute(self, values, db, state):
         feedback = super().execute( values, db, state)
-        tournament = Tournament(db, **db.table("tournaments").get(doc_id=values["tournament_id"]))
-        table = db.table("players")
-        player_ids = tournament.players
-        if player_ids == []:
-            feedback["data"] = ["Aucun joueur inscrit en tournoi"]
-        players = [table.get(doc_id=id) for id in player_ids]
-        players.sort(key=lambda player: player['last_name'] + player['first_name'])
-        feedback["title"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
-        feedback["data"] = [Player(**player) for player in players]
+        stringified_tournament = db.table("tournaments").get(doc_id=values["tournament_id"])
+        if stringified_tournament is None:
+            feedback["title"] = f"Rapport: Tournoi, Liste des Joueurs"
+            feedback["data"] = ["Aucun tournoi correspondant à cet identifiant"]
+        else:
+            tournament = Tournament(db, **stringified_tournament)
+            table = db.table("players")
+            player_ids = tournament.players
+            feedback["title"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
+            if player_ids == []:
+                feedback["data"] = ["Aucun joueur inscrit en tournoi"]
+            else:
+                players = [table.get(doc_id=id) for id in player_ids]
+                players.sort(key=lambda player: player['last_name'] + player['first_name'])
+                feedback["data"] = [Player(**player) for player in players]
 
         state.default_command = None
         state.next_key = None

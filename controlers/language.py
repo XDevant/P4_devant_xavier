@@ -1,6 +1,9 @@
 key_translation = {"name": ["nom", "name"],
                    "first_name": ["prénom", "first name", "prenom"],
                    "last_name": ["nom", "last name", "name"],
+                   "place": ["lieu", "place"],
+                   "description": ["description"],
+                   "rule": ["règle", "rule"],
                    "date": ["date", "date"],
                    "date_of_birth": ["date de naissance", "date of birth"],
                    "score": ["score"],
@@ -8,8 +11,8 @@ key_translation = {"name": ["nom", "name"],
                    "gender": ["genre", "gender"],
                    "rounds": ["rondes", "rounds"],
                    "id": ["identifiant", "id"],
-                   "player_id": ["joueur", "player", "identifiant"],
-                   "tournament_id": ["tournoi", "tournament", "identifiant"]
+                   "player_id": ["joueur", "player"],
+                   "tournament_id": ["tournoi", "tournament"]
                   }
 
 command_translation = {"new_player": ["Nouveau Joueur", "New Player"],

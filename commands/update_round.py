@@ -59,6 +59,6 @@ class UpdateRound(Command):
             state.active_tournament = tournament.id
             feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
 
-        feedback["name"] = "Nouveau résultat:"
+        feedback["title"] = "Nouveau résultat:"
         feedback["data"] = [tournament]
         return feedback

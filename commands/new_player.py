@@ -37,6 +37,6 @@ class NewPlayer(Command):
         state.next_key = None
         
         feedback = super().execute( values, db, state)
-        feedback["name"] = "Nouveau Joueur crée:"
+        feedback["title"] = "Nouveau Joueur crée:"
         feedback["data"] = [new_item]
         return feedback

@@ -41,6 +41,6 @@ class UpdatePlayer(Command):
         state.next_key = None
 
         feedback = super().execute( values, db, state)
-        feedback["name"] = "Nouveau classement:"
+        feedback["title"] = "Nouveau classement:"
         feedback["data"] = [new_item]
         return feedback

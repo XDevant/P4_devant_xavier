@@ -14,11 +14,13 @@ class ListTournamentRanks(ListTournamentPlayers):
     def parse_values(self, raw_values, state):
         new_dict, errors = super().parse_values(raw_values, state)
         state.default_command = "list_tournament_ranks"
+        state.next_key = "tournament_id"
         return new_dict, errors
 
 
     def execute(self, values, db, state):
         feedback = super().execute( values, db, state)
         feedback["title"] = feedback["title"].split(',')[0] + ", Classements"
-        feedback["data"].sort(key=lambda player: player.ranking)
+        if not isinstance(feedback["data"][0], str):
+            feedback["data"].sort(key=lambda player: player.ranking)
         return feedback

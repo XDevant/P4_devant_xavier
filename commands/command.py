@@ -53,11 +53,13 @@ class Command(ABC):
                 new_dict[key] = saved_dict[key]
                 continue
             for i in range(len(values)):
-                check, value = self.format_value(key, values[i])
-                if check:
+                validation, value = self.format_value(key, values[i])
+                if validation:
                     values.pop(i)
                     new_dict[key] = value
                     break
+                else:
+                    errors.append(value)
             if new_dict[key] is None:
                 if check:
                     errors.append(key)

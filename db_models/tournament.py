@@ -84,12 +84,10 @@ class Tournament:
     def serialize(self, db):
         keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
         serialized = {key : getattr(self, key) for key in keys}
-        print(self.round_details)
         serialized['round_details'] = []
         for round in self.round_details:
             round_id = round.complete_update(db)
             serialized['round_details'].append(round_id)
-        print(serialized)
         return serialized
 
 

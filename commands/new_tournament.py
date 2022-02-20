@@ -36,6 +36,6 @@ class NewTournament(Command):
         state.next_key = None
         
         feedback = super().execute( values, db, state)
-        feedback["name"] = "Nouveau Tournoi crée:"  
+        feedback["title"] = "Nouveau Tournoi crée:"  
         feedback["data"] = [new_item]
         return feedback
