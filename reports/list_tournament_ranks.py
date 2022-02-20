@@ -1,5 +1,6 @@
 from reports.list_tournament_players import ListTournamentPlayers
 
+
 class ListTournamentRanks(ListTournamentPlayers):
     def __init__(self):
         self.commands = ("ltc", "ltk")
@@ -19,5 +20,5 @@ class ListTournamentRanks(ListTournamentPlayers):
     def execute(self, values, db, state):
         feedback = super().execute( values, db, state)
         feedback["title"] = feedback["title"].split(',')[0] + ", Classements"
-        feedback["data"] = feedback["data"].sort(key=lambda player: player.ranking)
+        feedback["data"].sort(key=lambda player: player.ranking)
         return feedback

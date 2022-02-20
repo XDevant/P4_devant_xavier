@@ -61,21 +61,21 @@ class Tournament:
 
 
     def __repr__(self) -> str:
-        first_part = f"Tournoi n°{self.id}: {self.name} à {self.place} le {self.date}."
+        first_part = f"Tournoi n°{self.id}: {self.name} à {self.place} le {self.date}. "
         if not self.registered:
-            second_part = f"Le tournoi n'est pas enregistré et donc fermé aux inscriptions. Taper (.te) pour l'enregistrer"
+            second_part = f"Le tournoi n'est pas enregistré et donc fermé aux inscriptions.\n Taper (.te) pour l'enregistrer. "
         else:
             second_part = f"Il y a {len(self.players)} joueurs inscrits"
             if len(self.players) > 0:
                 second_part += ": " + str(self.players) + ". "
             else:
-                second_part += '.'
+                second_part += '. '
         if not self.started:
-            third_part = "Le tournoi n'est pas démarré"
+            third_part = "Le tournoi n'est pas démarré. \n"
         elif self.finished:
-            third_part = f"Le tournoi est terminé"
+            third_part = f"Le tournoi est terminé. \n"
         else:
-            third_part = f"Le tournoi est démarré."
+            third_part = f"Le tournoi est démarré. \n"
         if len(self.round_details) > 0:
             third_part += str(self.round_details)
         return first_part + second_part + third_part

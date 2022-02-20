@@ -32,7 +32,7 @@ class View:
 
 
     def parsing_error(self, command, values, errors):
-        pretty_command = self.translation.commands[command.replace('_', '')][self.language]
+        pretty_command = self.translation.commands[command][self.language]
         print(f"\n Valeurs fournies insuffisantes pour la commande: {pretty_command}")
         if self.verbose and not self.muted:
             print(*self.help.values[:3])
@@ -54,8 +54,7 @@ class View:
         print("\n", feedback["title"])
         for item in feedback["data"]:
             print(item)
-        print("\n")
-        for key, value in feedback.items:
-            if key not in ["title", "data"]:
+        for key, value in feedback.items():
+            if key not in ["title", "data"] and len(value) > 0:
                 print(value)
         return None
