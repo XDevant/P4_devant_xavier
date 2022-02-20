@@ -10,6 +10,7 @@ class View:
         self.help = Help()
         self.report = Report()
         self.translation = Translation()
+        self.language = 0
 
     def gather_command(self):
         answer = input("\nEntrez une commande: ")
@@ -17,7 +18,10 @@ class View:
 
 
     def gather_value(self, next_key):
-        message = f"\nEntrez un(e) {self.translation.keys[next_key][0]}: "
+        if next_key is None:
+            message = f"\nEntrez la/les valeur(s) manquante(s): "
+        else:
+            message = f"\nEntrez un(e) {self.translation.keys[next_key][self.language]}: "
         answer = input(message)
         return answer
 
@@ -28,7 +32,8 @@ class View:
 
 
     def parsing_error(self, command, values, errors):
-        print(f"\n Valeurs fournies insuffisantes pour la commande: {self.translation.commands[command][0]}")
+        pretty_command = self.translation.commands[command.replace('_', '')][self.language]
+        print(f"\n Valeurs fournies insuffisantes pour la commande: {pretty_command}")
         if self.verbose and not self.muted:
             print(*self.help.values[:3])
         if len(errors) > 1:
@@ -37,7 +42,7 @@ class View:
         for key, value in values.items():
             if value is None:
                 value = "?"
-            display_values[self.translation.keys[key][0]] = value
+            display_values[self.translation.keys[key][self.language]] = value
         print("Valeurs actuelles: ", display_values, "\n ")
         return None
 

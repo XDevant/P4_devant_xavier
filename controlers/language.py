@@ -2,30 +2,32 @@ key_translation = {"name": ["nom", "name"],
                    "first_name": ["prénom", "first name", "prenom"],
                    "last_name": ["nom", "last name", "name"],
                    "date": ["date", "date"],
-                   "date_of_birth": ["date de naissance", "date of birth", "date"],
+                   "date_of_birth": ["date de naissance", "date of birth"],
                    "score": ["score"],
                    "ranking": ["classement", "ranking", "rang", "rank"],
                    "gender": ["genre", "gender"],
                    "rounds": ["rondes", "rounds"],
-                   "id": ["identifiant", "id",  "joueur", "player", "tournoi", "tournament", "round", "ronde"],
-                   "player_id": ["joueur", "player", "identifiant", "id"],
-                   "tournament_id": ["tournoi", "tournament", "identifiant", "id"]
+                   "id": ["identifiant", "id"],
+                   "player_id": ["joueur", "player", "identifiant"],
+                   "tournament_id": ["tournoi", "tournament", "identifiant"]
                   }
 
-command_translation = {"newplayer": ["Nouveau Joueur", "New Player"],
-                       "newtournament": ["Nouveau Tournoi", "New Tournament"],
-                       "newround": ["Nouvelle Ronde", "New Round"],
-                       "updateplayer": ["Modifier Joueur", "Update Player"],
-                       "updatetournament": ["Modifier Tournoi", "Update Tournament"],
-                       "updateround": ["Modifier Round", "Update Round"],
-                       "starttournament": ["Démarrer Tournoi", "Start Tournament"],
-                       "startround": ["Démarrer Ronde", "Start Round"],
-                       "help": ["Aide", "Help"],
-                       "save": ["Sauver", "Save"],
-                       "quit": ["Quitter", "eXit"],
-                       "options": ["Options", "Options"],
-                       "reset": ["Réinitialiser", "Reset"]
+command_translation = {"newplayer": ["Nouveau Joueur", "New Player", "new_player"],
+                       "newtournament": ["Nouveau Tournoi", "New Tournament", "new_tournament"],
+                       "newround": ["Nouvelle Ronde", "New Round", "new_round"],
+                       "updateplayer": ["Modifier Joueur", "Update Player", "update_player"],
+                       "updatetournament": ["Modifier Tournoi", "Update Tournament", "update_tournament"],
+                       "updateround": ["Modifier Round", "Update Round", "update_round"],
+                       "starttournament": ["Démarrer Tournoi", "Start Tournament", "start_tournament"],
+                       "startround": ["Démarrer Ronde", "Start Round", "start_round"],
+                       "help": ["Aide", "Help", "help"],
+                       "save": ["Sauver", "Save", "save"],
+                       "quit": ["Quitter", "eXit", "quit"],
+                       "options": ["Options", "Options", "options"],
+                       "reset": ["Réinitialiser", "Reset", "reset"],
+                       "report": ["Rapport", "Report", "report"]
                       }
+
 
 class Translation:
     def __init__(self):

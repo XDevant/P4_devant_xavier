@@ -5,9 +5,8 @@ from db_models.tournament import Tournament
 
 class Report(Command):
     def __init__(self):
-        self.commands = (".lt", ".lj", ".lp", ".lc", ".lk", ".ltj", ".ltp", ".ltc", ".ltk", ".ltr", ".ltm")
+        self.commands = (".lt", ".lj", ".lp", ".lc", ".lr", ".ltj", ".ltp", ".ltc", ".ltk", ".ltr", ".ltm")
         self.natural = [["list", "joueur", "player", "classement", "ranking"]]
-        self.values = True
 
 
     def is_the_one(self, input):
@@ -33,12 +32,14 @@ class Report(Command):
 
 
     def execute(self, raw_command, values, db, state):
+        feedback = super().execute( values, db, state)
         match raw_command:
             case ".lt":
                 table = db.table("tournaments")
                 tournaments = sorted(table.all(), key=lambda tournament: tournament['date'])
                 name = "Rapport: Liste des Tournois"
                 return name, [Tournament(db, **tournament) for tournament in tournaments]
+                
             case ".lj" | ".lp":
                 table = db.table("players")
                 players = sorted(table.all(), key=lambda player: player['last_name'] + player['first_name'])
@@ -59,12 +60,10 @@ class Report(Command):
                 players = []
                 for id in player_ids:
                     players.append(table.get(doc_id=id))
-                print(players)
                 if raw_command in [".ltc", ".ltk"]:
                     players.sort(key=lambda player: player['ranking'])
                     name += " (classement)"
                 else:
-                    print("b")
                     players.sort(key=lambda player: player['last_name'] + player['first_name'])
                     name += " (alphabétique)"
                 return name, [Player(**player) for player in players]

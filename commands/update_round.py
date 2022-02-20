@@ -6,32 +6,29 @@ from db_models.tournament import Tournament
 
 class UpdateRound(Command):
     def __init__(self):
-        self.commands = (".ra", ".ru")
+        self.commands = ("mr", "rm", "ru", "ur")
         self.natural = [["ronde", "actualiser", "round", "update"]]
-        self.values = {"tournament_id": None, "player_id": None, "score": None}
 
 
     def is_the_one(self, input):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_command, raw_values, state):
-        if raw_values is None:
-            return False, {}
-        new_dict = self.values
-        saved_dict = state.round_update_in_process
-        return self.load_values(raw_values, new_dict, saved_dict)
-
-
-    def check_value(self, key, value):
-        if "id" in key:
-            return int(value) > 0
+    def parse_values(self, raw_values, state):
+        dict = {"tournament_id": state.active_tournament, "player_id": None, "score": None}
+        saved_dict = state.update_round
+        check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
+        if check:
+            return new_dict, errors
         else:
-            return value <= 1 and value >= 0
+            state.default_command = "update_round"
+            state.next_key = errors[-1]
+            state.update_round = {key: value for key, value in new_dict.items() if value is not None}
+            return new_dict, errors
 
 
-    def execute(self, raw_command, values, db, state):
-        name = "Nouveau résultat:"
+    def execute(self, values, db, state):
+        feedback = super().execute( values, db, state)
         table = db.table("tournaments")
         tournament = table.get(doc_id=values['tournament_id'])
         tournament = Tournament(db, **tournament)
@@ -54,4 +51,14 @@ class UpdateRound(Command):
         round.update_match(i, points_a, points_b)
         tournament.round_details[-1] = round
         tournament.complete_update(db)
-        return name, [tournament]
+
+        state.update_round = {}
+        state.last_command = "update_round"
+        state.next_key = "player_id"
+        if state.active_tournament != tournament.id:
+            state.active_tournament = tournament.id
+            feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
+
+        feedback["name"] = "Nouveau résultat:"
+        feedback["data"] = [tournament]
+        return feedback

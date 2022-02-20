@@ -7,7 +7,6 @@ class Command(ABC):
     def __init__(self):
         self.commands = ()
         self.natural = [[]]
-        self.values = None
 
 
     @abstractmethod
@@ -17,14 +16,14 @@ class Command(ABC):
         return False
 
     @abstractmethod
-    def parse_values(self, raw_command, raw_values, state):
-        if self.values is None:
-            return True, {}, []
+    def parse_values(self, raw_values, state):
+        return {}, [[]]
 
 
     @abstractmethod
-    def execute(self, raw_command, values, db, state):
-        return True, None
+    def execute(self, values, db, state):
+        feedback = {"title": "", "data": [], "info": "", "hint": ""}
+        return feedback
 
     
     def load_values(self, raw_values, new_dict, saved_dict):
@@ -42,7 +41,7 @@ class Command(ABC):
                     else:
                         errors.append(value)
                 else:
-                    errors.append(f"Clef incorecte: {new_key} pur valeur {value}")
+                    errors.append(f"Clef incorecte: {new_key} pour valeur {value}")
             else:
                 values.append(value)
         check = True
@@ -65,12 +64,15 @@ class Command(ABC):
                     check = False
         if check:
             errors.append([])
+        for key, value in key_values.items():
+            if key not in new_dict.keys():
+                new_dict[key] = value
         return check, new_dict, errors
 
 
     def translate_key(self, new_key, keys):
         for key in keys:
-            if new_key.lower().strip() in key_translation[key]:
+            if new_key.lower().strip() in key_translation[key] + [key]:
                 return key
         return None
 

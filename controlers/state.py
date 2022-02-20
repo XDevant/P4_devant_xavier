@@ -6,13 +6,15 @@ class State:
         self.update_player = {}
         self.update_tournament = {}
         self.update_round = {}
+        self.start_tournament = {}
+        self.active_tournament = None
         self.default_player = None
         self.default_tournament = None
         self.default_command = None
-        self.menu = None
         self.last_command = ""
-        self.next_command = None
         self.next_key = None
+        self.validation = False
+        self.ignore_default = False
 
 
     def __repr__(self):
