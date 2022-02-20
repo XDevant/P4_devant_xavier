@@ -20,6 +20,6 @@ class ListTournaments(Command):
         feedback = super().execute( values, db, state)
         table = db.table("tournaments")
         tournaments = sorted(table.all(), key=lambda tournament: tournament['date'])
-        feedback["name"] = "Rapport: Liste des Tournois"
+        feedback["title"] = "Rapport: Liste des Tournois"
         feedback["data"] = [Tournament(db, **tournament) for tournament in tournaments]
         return feedback

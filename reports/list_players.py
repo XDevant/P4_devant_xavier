@@ -20,6 +20,6 @@ class ListPlayers(Command):
         feedback = super().execute( values, db, state)
         table = db.table("players")
         players = sorted(table.all(), key=lambda player: player['last_name'] + player['first_name'])
-        feedback["name"] = "Rapport: Liste des Joueurs (alphabétique)"
+        feedback["title"] = "Rapport: Liste des Joueurs (alphabétique)"
         feedback["data"] = [Player(**player) for player in players]
         return feedback

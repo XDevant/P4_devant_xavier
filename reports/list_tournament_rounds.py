@@ -21,5 +21,5 @@ class ListTournamentRounds(ListTournamentPlayers):
         feedback = {}
         tournament = Tournament(db, **db.table("tournaments").get(doc_id=values['tournament_id']))
         feedback["rounds"] = [round.name for round in tournament.round_details]
-        feedback["name"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Rondes"
+        feedback["title"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Rondes"
         return feedback

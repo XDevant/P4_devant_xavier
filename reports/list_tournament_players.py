@@ -34,7 +34,7 @@ class ListTournamentPlayers(Command):
             feedback["data"] = ["Aucun joueur inscrit en tournoi"]
         players = [table.get(doc_id=id) for id in player_ids]
         players.sort(key=lambda player: player['last_name'] + player['first_name'])
-        feedback["name"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
+        feedback["title"] = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
         feedback["data"] = [Player(**player) for player in players]
 
         state.default_command = None

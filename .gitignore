@@ -6,3 +6,4 @@ views/help.py
 views/__pycache__/
 controlers/__pycache__/
 commands/__pycache__/
+reports/__pycache__/

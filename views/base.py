@@ -50,8 +50,12 @@ class View:
         print(f"Erreur lors de l'execution de la commande: {command} + {values}")
         return None
 
-    def display(self, name, data):
-        print("\n", name)
-        for item in data:
+    def display(self, feedback):
+        print("\n", feedback["title"])
+        for item in feedback["data"]:
             print(item)
+        print("\n")
+        for key, value in feedback.items:
+            if key not in ["title", "data"]:
+                print(value)
         return None

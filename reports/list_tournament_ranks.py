@@ -18,6 +18,6 @@ class ListTournamentRanks(ListTournamentPlayers):
 
     def execute(self, values, db, state):
         feedback = super().execute( values, db, state)
-        feedback["name"] = feedback["name"].split(',')[0] + ", Classements"
+        feedback["title"] = feedback["title"].split(',')[0] + ", Classements"
         feedback["data"] = feedback["data"].sort(key=lambda player: player.ranking)
         return feedback

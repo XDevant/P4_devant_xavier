@@ -10,10 +10,14 @@ class Selector:
         self.commands = []
         command_classes = [command for command in dir(commands) if command[0].isupper()]
         report_classes = [report for report in dir(reports) if report[0].isupper()]
-        for command_class in command_classes + report_classes:
+        for command_class in command_classes:
             command = self.snake_to_under(command_class)
             self.commands.append(command)
             setattr(self, command, getattr(commands, command_class)())
+        for report_class in report_classes:
+            report = self.snake_to_under(report_class)
+            self.commands.append(report)
+            setattr(self, report, getattr(reports, report_class)())
 
     def __iter__(self):
         return self.commands.__iter__()
