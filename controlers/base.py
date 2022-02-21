@@ -13,12 +13,13 @@ class Controler:
     def run(self):
         running = True
         while running:
-            if self.state.default_command is None:
+            if self.state.validation:
+                input = self.view.gather_confirmation(self.state.default_command)
+            elif self.state.default_command is None:
                 input = self.view.gather_command()
-                raw_command, raw_values = self.parse_input(input)
             else:
                 input = self.view.gather_value(self.state.next_key)
-                raw_command, raw_values = self.parse_input(input)
+            raw_command, raw_values = self.parse_input(input)
             if raw_command is None:
                 if self.state.default_command is None:
                     command = None
@@ -32,7 +33,7 @@ class Controler:
             else:
                 self.view.command_error(input)
                 continue
-
+            print(errors[-1])
             if errors[-1] == []:
                 try:
                     feedback = getattr(self.selector, command).execute(values, self.db, self.state)
@@ -40,6 +41,12 @@ class Controler:
                     print(type(err))
                     self.view.execution_error(command, values, errors)
                 else:
+                    next_command = self.state.default_command
+                    if next_command is not None and next_command != command:
+                        self.state.prediction = True
+                        feedback["menu"] = next_command
+                        feedback["values"], e = getattr(self.selector, next_command).parse_values([], self.state)
+                        self.state.prediction = False
                     self.view.display(feedback)
             else:
                 if command == self.state.last_command:
@@ -50,8 +57,7 @@ class Controler:
 
             if command == "quit":
                         running = False
-            if self.state.ignore_default:
-                 self.state.ignore_default = False
+            self.state.ignore_default = False
 
 
     def parse_input(self, input):

@@ -14,6 +14,7 @@ class State:
         self.last_command = ""
         self.next_key = None
         self.validation = False
+        self.prediction = False
         self.ignore_default = False
 
 

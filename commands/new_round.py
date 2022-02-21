@@ -18,6 +18,8 @@ class NewRound(Command):
         dict = {"tournament_id": state.active_tournament, "name": None}
         saved_dict = state.new_round
         check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
+        if (state.validation and raw_values == []) or state.prediction:
+                return new_dict, [[]]
         if check:
             return new_dict, errors
         else:
@@ -30,20 +32,29 @@ class NewRound(Command):
     def execute(self, values, db, state):
         feedback = super().execute( values, db, state)
         table = db.table("tournaments")
-        tournament = Tournament(db, **table.get(doc_id=values["tournament_id"]))
-        round = Round(name=values["name"], tournament=values["tournament_id"])
+        stringified_tournament = table.get(doc_id=values["tournament_id"])
+        if stringified_tournament is None or "matches" not in state.new_round.keys():
+            feedback["title"] = f"Nouvelle Ronde : Echec "
+            if stringified_tournament is None:
+                feedback["data"] = [f"Le tournoi {values['tournament_id']} n'existe pas!"]
+            else:
+                feedback["data"] = ["La ronde précédente n'est pas terminée!"]
+            state.default_command = None
+            state.next_key = None
+            state.new_round = {}
+            return feedback
+        tournament = Tournament(db, **stringified_tournament)
+        round = Round(name=values["name"], tournament=tournament.id)
         round.add_matches(*state.new_round["matches"])
         tournament.new_round(round)
         tournament.complete_update(db)
-
-        state.new_round = {}
         state.default_command = "update_round"
-        state.next_key = None
+        state.next_key = "player_id"
         state.last_command = "new_round"
         if state.active_tournament != tournament.id:
             state.active_tournament = tournament.id
             feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
-
         feedback["title"] = "Nouvelle ronde démarrée:"
         feedback["data"] = [round]
+        state.new_round = {}
         return feedback

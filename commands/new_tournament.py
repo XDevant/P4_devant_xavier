@@ -27,15 +27,17 @@ class NewTournament(Command):
 
 
     def execute(self, values, db, state):
-        new_item = Tournament(db, **values)
-        new_item.register(db)
-        state.default_tournament = new_item.id
+        tournament = Tournament(db, **values)
+        tournament.register(db)
+        state.default_tournament = tournament.id
         state.new_tournament = {}
-        state.default_command = None
+        state.update_tournament = {}
+        state.default_command = "update_tournament"
         state.last_command = "new_tournament"
-        state.next_key = None
+        state.next_key = "player_id"
         
         feedback = super().execute( values, db, state)
         feedback["title"] = "Nouveau Tournoi crée:"  
-        feedback["data"] = [new_item]
+        feedback["data"] = [tournament]
+        feedback["info"] = f"Le tournoi {tournament.id} est maintenant le tournoi par défaut."
         return feedback

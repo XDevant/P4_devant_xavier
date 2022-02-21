@@ -1,4 +1,3 @@
-from tinydb.table import Document
 from datetime import date
 from db_models.round import Round
 
@@ -93,26 +92,38 @@ class Tournament:
 
     def register(self, db):
         table = db.table("tournaments")
-        if not self.id:
-            self.id = len(table) + 1
         if not self.registered:
             self.registered = True
             serialized = self.serialize(db)
-            table.insert(Document(serialized, doc_id=self.id))
+            doc_id = table.insert(serialized)
+            self.id = doc_id
+            serialized = self.serialize(db)
+            table.update(serialized, doc_ids=[self.id])
             return True
         else:
             return False
 
+
     def complete_update(self, db):
+        table = db.table("tournaments")
         if self.registered:
             serialized = self.serialize(db)
-            db.table("tournaments").update(Document(serialized, doc_id=self.id))
+            table.update(serialized, doc_ids=[self.id])
+
 
     def add_player(self, id):
         if id not in self.players:
             self.players.append(id)
-            return True
-        return False
+            return id
+        return -1
+
+
+    def remove_player(self, id):
+        if id in self.players:
+            index = self.players.index(id)
+            return self.players.pop(index)
+        return -1
+
 
     def new_round(self, round):
         self.round += 1

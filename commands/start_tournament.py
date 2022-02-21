@@ -16,18 +16,20 @@ class StartTournament(Command):
     def parse_values(self, raw_values, state):
         if state.validation:
             dict = {"tournament_id": None}
+            saved_dict = {"tournament_id": state.default_tournament}
         else:
             dict = {"tournament_id": state.default_tournament}
-        saved_dict = {}
+            saved_dict = {}
         check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
-        if state.validation and raw_values == []:
+        if (state.validation and raw_values == []) or state.prediction:
                 return new_dict, [[]]
-        if check:
-            if state.validation:
-                state.validation == False
-            return new_dict, errors
         if state.validation:
+            state.validation = False
             errors = ["Commande annulée Tournoi non démarré"]
+            state.default_command = "update_tournament"
+            state.next_key = None
+        if check:
+            return new_dict, errors
         else:
             state.default_command = "start_tournament"
             state.next_key = errors[-1]
@@ -64,9 +66,9 @@ class StartTournament(Command):
             feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
             return feedback
         else:
-            feedback["title"] = "Veillez confirmer la commande Démarrer Tournoi n°{tournament.id}.(Entrée)"
+            feedback["title"] = f"Veillez confirmer la commande Démarrer Tournoi n°{tournament.id}.(Entrée)"
             feedback["data"] = [tournament]
-            feedback["info"] = "Vous pouver saisir n'importe quel autre caractère pour annuler ou une id de tournoi."
+            feedback["info"] = "Vous pouver saisir n'importe quel autre caractère pour annuler."
             state.validation = True
             state.default_command = "start_tournament"
             state.default_tournament = tournament.id

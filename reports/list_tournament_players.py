@@ -14,7 +14,11 @@ class ListTournamentPlayers(Command):
 
 
     def parse_values(self, raw_values, state):
-        dict = {"tournament_id": state.active_tournament}
+        if state.active_tournament is None:
+            id = state.default_tournament
+        else:
+            id = state.active_tournament
+        dict = {"tournament_id": id}
         saved_dict = {}
         check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
         if check:
@@ -29,7 +33,7 @@ class ListTournamentPlayers(Command):
         feedback = super().execute( values, db, state)
         stringified_tournament = db.table("tournaments").get(doc_id=values["tournament_id"])
         if stringified_tournament is None:
-            feedback["title"] = f"Rapport: Tournoi, Liste des Joueurs"
+            feedback["title"] = f"Rapport: Tournoi {values['tournament_id']}, Liste des Joueurs"
             feedback["data"] = ["Aucun tournoi correspondant à cet identifiant"]
         else:
             tournament = Tournament(db, **stringified_tournament)

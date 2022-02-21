@@ -45,12 +45,14 @@ class Command(ABC):
             else:
                 values.append(value)
         check = True
-        for key in new_dict.keys():
+        for key, value in new_dict.items():
             if key in key_values.keys():
                 new_dict[key] = key_values[key]
                 continue
             if key in saved_dict.keys():
                 new_dict[key] = saved_dict[key]
+                continue
+            if value is not None:
                 continue
             for i in range(len(values)):
                 validation, value = self.format_value(key, values[i])
@@ -80,6 +82,7 @@ class Command(ABC):
 
 
     def format_value(self, key, value):
+        value = value.strip(' \'"')
         if key in ["rounds", "ranking", "id", "tournament_id", "player_id"]:
             check = value.isnumeric() and int(value) > 0
             if check:

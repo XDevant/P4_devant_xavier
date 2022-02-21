@@ -18,6 +18,8 @@ class UpdateRound(Command):
         dict = {"tournament_id": state.active_tournament, "player_id": None, "score": None}
         saved_dict = state.update_round
         check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
+        if state.prediction:
+                return new_dict, [[]]
         if check:
             return new_dict, errors
         else:

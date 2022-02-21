@@ -16,6 +16,8 @@ class UpdatePlayer(Command):
         dict = {"player_id": state.default_player, "ranking": None}
         saved_dict = state.update_player
         check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
+        if state.prediction:
+                return new_dict, [[]]
         if check:
             return new_dict, errors
         else:
