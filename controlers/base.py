@@ -1,6 +1,7 @@
 from controlers.selector import Selector
 from controlers.state import State
 from controlers.language import command_translation
+from models.feedback import Feedback
 
 
 class Controler:
@@ -13,6 +14,7 @@ class Controler:
     def run(self):
         running = True
         while running:
+            feedback = Feedback()
             if self.state.validation:
                 input = self.view.gather_confirmation(self.state.default_command)
             elif self.state.default_command is None:
@@ -33,12 +35,10 @@ class Controler:
             else:
                 self.view.command_error(input)
                 continue
-            print(errors[-1])
             if errors[-1] == []:
                 try:
                     feedback = getattr(self.selector, command).execute(values, self.db, self.state)
                 except Exception as err:
-                    print(type(err))
                     self.view.execution_error(command, values, errors)
                 else:
                     next_command = self.state.default_command

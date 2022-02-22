@@ -1,6 +1,6 @@
 from commands.command import Command
-from db_models.player import Player
-from db_models.tournament import Tournament
+from models.player import Player
+from models.tournament import Tournament
 
 
 
@@ -37,7 +37,9 @@ class UpdateRound(Command):
         round = tournament.round_details[-1]
         i, j = round.find_indexes(values["player_id"])
         if i < 0:
-            return "Joueur non inscrit", []
+            feedback["title"] = "Nouveau résultat: Echech"
+            feedback["data"] = [f"Joueur {i} non inscrit"]
+            return feedback
         if j == 0:
             points_a = values["score"]
             if round.matches[i][1][1] is None:
@@ -53,7 +55,8 @@ class UpdateRound(Command):
         round.update_match(i, points_a, points_b)
         tournament.round_details[-1] = round
         tournament.complete_update(db)
-
+        if round.chech_matches() == -1:
+            pass
         state.update_round = {}
         state.last_command = "update_round"
         state.next_key = "player_id"

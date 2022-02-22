@@ -1,7 +1,7 @@
 from datetime import datetime
 from commands.command import Command
-from db_models.tournament import Tournament
-from db_models.round import Round
+from models.tournament import Tournament
+from models.round import Round
 
 
 class NewRound(Command):

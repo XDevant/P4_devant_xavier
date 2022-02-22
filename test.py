@@ -1,7 +1,7 @@
 from datetime import date
 from tinydb import TinyDB
-from db_models.player import Player
-from db_models.tournament import Tournament
+from models.player import Player
+from models.tournament import Tournament
 
 
 db = TinyDB("db/db_test.json")

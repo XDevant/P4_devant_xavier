@@ -1,5 +1,5 @@
 from commands.command import Command
-from db_models.tournament import Tournament
+from models.tournament import Tournament
 
 
 
@@ -68,8 +68,7 @@ class UpdateTournament(Command):
                 state.validation = False
                 tournament.remove_player(values['player_id'])
                 feedback["title"] = f"Tournoi n°{tournament.id}, Joueur {values['player_id']} désinscrit:"
-            else:
-                state.update_tournament = {}
+            state.update_tournament = {}
             tournament.complete_update(db)
             feedback["data"] = [tournament]
         state.next_key = "player_id"

@@ -1,5 +1,5 @@
 from datetime import date
-from db_models.round import Round
+from models.round import Round
 
 
 class Tournament:
@@ -108,7 +108,8 @@ class Tournament:
         table = db.table("tournaments")
         if self.registered:
             serialized = self.serialize(db)
-            table.update(serialized, doc_ids=[self.id])
+            return table.update(serialized, doc_ids=[self.id])
+        return None
 
 
     def add_player(self, id):

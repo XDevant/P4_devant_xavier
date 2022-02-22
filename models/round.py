@@ -50,24 +50,24 @@ class Round:
 
 
     def register(self, table):
-        if not self.id:
-            self.id = len(table) + 1
         if not self.started:
             self.start()
             serialized = self.serialize()
-            print(serialized)
-            return table.insert(Document(serialized, doc_id=self.id))
+            doc_id = table.insert(serialized)
+            self.id = doc_id
+            serialized = self.serialize()
+            table.update(serialized, doc_ids=[self.id])
+            return True
         else:
-            return -1
+            return False
+        
 
 
     def complete_update(self, db):
         if self.started:
             serialized = self.serialize()
-            db.table("rounds").update(Document(serialized, doc_id=self.id))
-            return self.id
-        else:
-            return self.register(db.table("rounds"))
+            return db.table("rounds").update(serialized, doc_ids=[self.id])
+        return None
 
 
     def start(self):
@@ -79,16 +79,19 @@ class Round:
 
 
     def validate(self):
-        check = len(self.matches) > 0
-        for match in self.matches:
-            if match[0][1] is None or match[1][1] is None:
-                check = False
-                break
-        if self.ended or not check:
+        if self.ended or not len(self.matches) == 0 or self.chech_matches() >= 0:
             return False
         else:
             self.ended = str(datetime.today())
             return True
+
+
+    def chech_matches(self):
+        for i in range(len(self.matches)):
+            match = self.matches[i]
+            if match[0][1] is None or match[1][1] is None:
+                return i
+        return -1
 
 
     def add_matches(self, *args):

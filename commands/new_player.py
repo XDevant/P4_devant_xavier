@@ -1,5 +1,5 @@
 from commands.command import Command
-from db_models.player import Player
+from models.player import Player
 
 
 class NewPlayer(Command):

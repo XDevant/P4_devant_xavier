@@ -1,6 +1,5 @@
 from commands.command import Command
-from db_models.player import Player
-from db_models.tournament import Tournament
+from models.tournament import Tournament
 
 
 class NewTournament(Command):

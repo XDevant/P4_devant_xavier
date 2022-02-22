@@ -1,5 +1,5 @@
 from reports.list_tournament_players import ListTournamentPlayers
-from db_models.tournament import Tournament
+from models.tournament import Tournament
 
 
 class ListTournamentMatchs(ListTournamentPlayers):
