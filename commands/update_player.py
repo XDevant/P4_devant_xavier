@@ -13,33 +13,32 @@ class UpdatePlayer(Command):
 
 
     def parse_values(self, feedback, state):
-        feedback.values = {"player_id": state.default_player, "ranking": None}
+        feedback.values = {"player_id": None, "ranking": None}
         saved_dict = state.update_player
         self.load_values(feedback, saved_dict)
-        if state.prediction:
+        if state.prediction or feedback.parsed:
                 return None
-        if feedback.parsed:
-            return None
         else:
-            state.default_command = "update_player"
-            state.next_key = feedback.errors[-1]
-            state.update_player = {key: value for key, value in feedback.values.items() if value is not None}
+            state.parsing_failure(feedback)
             return None
-
 
 
     def execute(self, feedback, db, state):
         table = db.table("players")
+        player_id = feedback.values['player_id']
         new_item = Player(**table.get(doc_id=feedback.values['player_id']))
+        stringified_player = table.get(doc_id=player_id)
+        if stringified_player is None:
+            feedback.data = ["Le jouer {player_id} n'existe pas!"]
+            state.execute_refused(feedback, False)
+            return None
+        new_item = Player(**stringified_player)
         new_item.ranking = feedback.values["ranking"]
         new_item.complete_update(table)
 
-        if "ranking" in feedback.values.keys():
-            state.default_player = None
-        state.update_player = {}
+        state.execute_succes(feedback)
         state.default_command = None
-        state.last_command = "update_player"
-        state.next_key = None
+
         feedback.title = "Nouveau classement:"
         feedback.data = [new_item]
         return None

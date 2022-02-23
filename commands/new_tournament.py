@@ -27,10 +27,10 @@ class NewTournament(Command):
         tournament = Tournament(db, **feedback.values)
         tournament.register(db)
         
+        state.execute_succes(feedback)
         state.default_tournament = tournament.id
-        state.new_tournament = {}
         state.default_command = "update_tournament"
-        state.last_command = feedback.command
+
         feedback.title = "Nouveau Tournoi crée:"  
         feedback.data = [tournament]
         feedback.info = f"Le tournoi {tournament.id} est maintenant le tournoi par défaut."

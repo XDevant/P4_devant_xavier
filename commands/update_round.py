@@ -21,21 +21,29 @@ class UpdateRound(Command):
         if state.prediction or feedback.parsed:
                 return None
         else:
-            state.default_command = feedback.command
-            state.next_key = feedback.errors[-1]
-            state.update_round = {key: value for key, value in feedback.values.items() if value is not None}
+            state.parsing_failure(feedback)
             return None
     
 
     def execute(self, feedback, db, state):
         table = db.table("tournaments")
-        stringified_tournament = table.get(doc_id=feedback.values['tournament_id'])
+        tournament_id = feedback.values['tournament_id']
+        stringified_tournament = table.get(doc_id=tournament_id)
+        if stringified_tournament is None:
+            feedback.data = ["Le tournoi {tournament_id} n'existe pas!"]
+            state.execute_refused(feedback, tournament_id == state.default_tournament)
+            return None
         tournament = Tournament(db, **stringified_tournament)
+        if len(tournament.round_details) == 0:
+            feedback.data = ["Le tournoi {tournament_id} n'est pas démarré!"]
+            state.execute_refused(feedback, False)
+            return None
         round = tournament.round_details[-1]
         i, j = round.find_indexes(feedback.values["player_id"])
         if i < 0:
-            feedback["title"] = "Nouveau résultat: Echech"
-            feedback["data"] = [f"Joueur {i} non inscrit"]
+            state.execute_refused(feedback, False)
+            feedback.title = "Nouveau résultat: Echech"
+            feedback.data = [f"Joueur {i} non inscrit"]
             return feedback
         if j == 0:
             points_a = feedback.values["score"]
@@ -54,9 +62,8 @@ class UpdateRound(Command):
         tournament.complete_update(db)
         if round.chech_matches() == -1:
             pass
-        state.update_round = {}
-        state.last_command = feedback.command
-        state.next_key = "player_id"
+        state.execute_succes(feedback)
+        state.next_keys = ["player_id"]
         if state.active_tournament != tournament.id:
             state.active_tournament = tournament.id
             feedback.info = f"Le tournoi n°{tournament.id} est le tournoi actif par default."

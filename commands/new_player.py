@@ -28,13 +28,8 @@ class NewPlayer(Command):
         new_item = Player(**feedback.values)
         new_item.register(db.table("players"))
 
-        state.default_player = new_item.id
-        state.new_player = {}
-        state.default_command = None
-        state.last_command = feedback.command
-        state.next_key = None
+        state.execute_succes(feedback)
 
         feedback.title = "Nouveau Joueur crée:"
         feedback.data = [new_item]
-        feedback.info = f"Le joueur {new_item.id} est maintenant le joueur par défaut."
         return None

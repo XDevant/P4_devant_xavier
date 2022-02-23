@@ -27,3 +27,26 @@ class State:
         self.default_command = feedback.command
         self.next_keys = feedback.next_keys
         setattr(self, feedback.command, {key: value for key, value in feedback.values.items() if value is not None})
+
+
+    def validation_failure(self, feedback):
+        self.validation = False
+        setattr(self, feedback.command, {})
+        self.default_command = feedback.command
+        self.next_keys = []
+
+
+    def execute_succes(self, feedback):
+        setattr(self, feedback.command, {})
+        self.last_command = feedback.command
+        self.next_keys = []
+        feedback.succes = True
+
+
+    def execute_refused(self, feedback, check):
+        setattr(self, feedback.command, {})
+        self.next_key = None
+        if check:
+            feedback.info = f"Le tournoi {self.default_tournament} n'est plus le tournoi par défaut."
+            self.default_tournament = None
+

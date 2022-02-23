@@ -28,11 +28,10 @@ class StartTournament(Command):
             state.validation = False
             feedback.errors = ["Commande annulée Tournoi non démarré"]
             state.default_command = "update_tournament"
-            state.next_key = None
+            state.next_keys = []
             return None
         else:
-            state.default_command = "start_tournament"
-            state.next_key = feedback.errors[-1]
+            state.parsing_failure(feedback)
         return None
 
 

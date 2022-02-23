@@ -25,7 +25,7 @@ class ListTournamentPlayers(Command):
             return None
         else:
             state.default_command = feedback.command
-            state.next_key = "tournament_id"
+            state.next_keys = ["tournament_id"]
             return None
 
 
