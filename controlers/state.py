@@ -12,7 +12,7 @@ class State:
         self.default_tournament = None
         self.default_command = None
         self.last_command = ""
-        self.next_key = None
+        self.next_keys = []
         self.validation = False
         self.prediction = False
         self.ignore_default = False
@@ -21,3 +21,9 @@ class State:
     def __repr__(self):
         keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
         return "".join([f"{key}: {getattr(self, key)}\n" for key in keys])
+
+
+    def parsing_failure(self, feedback):
+        self.default_command = feedback.command
+        self.next_keys = feedback.next_keys
+        setattr(self, feedback.command, {key: value for key, value in feedback.values.items() if value is not None})

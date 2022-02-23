@@ -14,42 +14,39 @@ class UpdateRound(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_values, state):
-        dict = {"tournament_id": state.active_tournament, "player_id": None, "score": None}
+    def parse_values(self, feedback, state):
+        feedback.values = {"tournament_id": state.active_tournament, "player_id": None, "score": None}
         saved_dict = state.update_round
-        check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
-        if state.prediction:
-                return new_dict, [[]]
-        if check:
-            return new_dict, errors
+        self.load_values(feedback, saved_dict)
+        if state.prediction or feedback.parsed:
+                return None
         else:
-            state.default_command = "update_round"
-            state.next_key = errors[-1]
-            state.update_round = {key: value for key, value in new_dict.items() if value is not None}
-            return new_dict, errors
+            state.default_command = feedback.command
+            state.next_key = feedback.errors[-1]
+            state.update_round = {key: value for key, value in feedback.values.items() if value is not None}
+            return None
+    
 
-
-    def execute(self, values, db, state):
-        feedback = super().execute( values, db, state)
+    def execute(self, feedback, db, state):
         table = db.table("tournaments")
-        tournament = table.get(doc_id=values['tournament_id'])
-        tournament = Tournament(db, **tournament)
+        stringified_tournament = table.get(doc_id=feedback.values['tournament_id'])
+        tournament = Tournament(db, **stringified_tournament)
         round = tournament.round_details[-1]
-        i, j = round.find_indexes(values["player_id"])
+        i, j = round.find_indexes(feedback.values["player_id"])
         if i < 0:
             feedback["title"] = "Nouveau résultat: Echech"
             feedback["data"] = [f"Joueur {i} non inscrit"]
             return feedback
         if j == 0:
-            points_a = values["score"]
+            points_a = feedback.values["score"]
             if round.matches[i][1][1] is None:
-                points_b = 1 - values["score"]
+                points_b = 1 - feedback.values["score"]
             else:
                 points_b = round.matches[i][1][1]
         else:
-            points_b = values["score"]
+            points_b = feedback.values["score"]
             if round.matches[i][0][1] is None:
-                points_a = 1 - values["score"]
+                points_a = 1 - feedback.values["score"]
             else:
                 points_a = round.matches[i][0][1]
         round.update_match(i, points_a, points_b)
@@ -58,12 +55,12 @@ class UpdateRound(Command):
         if round.chech_matches() == -1:
             pass
         state.update_round = {}
-        state.last_command = "update_round"
+        state.last_command = feedback.command
         state.next_key = "player_id"
         if state.active_tournament != tournament.id:
             state.active_tournament = tournament.id
-            feedback["info"] = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
+            feedback.info = f"Le tournoi n°{tournament.id} est le tournoi actif par default."
 
-        feedback["title"] = "Nouveau résultat:"
-        feedback["data"] = [tournament]
-        return feedback
+        feedback.title = "Nouveau résultat:"
+        feedback.data = [tournament]
+        return None

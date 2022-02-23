@@ -16,58 +16,55 @@ class Controler:
         while running:
             feedback = Feedback()
             if self.state.validation:
-                input = self.view.gather_confirmation(self.state.default_command)
+                feedback.input = self.view.gather_confirmation(self.state.default_command)
             elif self.state.default_command is None:
-                input = self.view.gather_command()
+                feedback.input = self.view.gather_command()
             else:
-                input = self.view.gather_value(self.state.next_key)
-            raw_command, raw_values = self.parse_input(input)
-            if raw_command is None:
-                if self.state.default_command is None:
-                    command = None
-                else:
-                    command = self.state.default_command
+                feedback.input = self.view.gather_value(self.state.next_keys)
+            self.parse_input(feedback)
+            if feedback.raw_command is None:
+                feedback.command = self.state.default_command
             else:
-                command = self.find_command(raw_command)
+                feedback.command = self.find_command(feedback.raw_command)
 
-            if command:
-                values, errors = getattr(self.selector, command).parse_values(raw_values, self.state)
+            if feedback.command:
+                getattr(self.selector, feedback.command).parse_values(feedback, self.state)
             else:
-                self.view.command_error(input)
+                self.view.command_error(feedback)
                 continue
-            if errors[-1] == []:
+            if feedback.parsed:
                 try:
-                    feedback = getattr(self.selector, command).execute(values, self.db, self.state)
+                    getattr(self.selector, feedback.command).execute(feedback, self.db, self.state)
                 except Exception as err:
-                    self.view.execution_error(command, values, errors)
+                    self.view.execution_error(feedback)
                 else:
                     next_command = self.state.default_command
-                    if next_command is not None and next_command != command:
+                    if next_command is not None and next_command != feedback.command:
                         self.state.prediction = True
-                        feedback["menu"] = next_command
-                        feedback["values"], e = getattr(self.selector, next_command).parse_values([], self.state)
+                        feedback.next_command = next_command
+                        getattr(self.selector, next_command).parse_values(feedback, self.state)
                         self.state.prediction = False
                     self.view.display(feedback)
             else:
-                if command == self.state.last_command:
+                if feedback.command == self.state.last_command:
                     self.view.muted = True
                 else:
                     self.view.muted = False
-                self.view.parsing_error(command, values, errors)
+                self.view.parsing_error(feedback)
 
-            if command == "quit":
+            if feedback.command == "quit":
                         running = False
             self.state.ignore_default = False
 
 
-    def parse_input(self, input):
-        if input == "..":
+    def parse_input(self, feedback):
+        if feedback.input == "..":
             return ("..", [])
         base = 0
-        splited_input = input.split(' ')
-        if input.startswith('..'):
+        splited_input = feedback.input.split(' ')
+        if feedback.input.startswith('..'):
             self.state.ignore_default = True
-        if input.startswith('.') or self.state.default_command is None:
+        if feedback.input.startswith('.') or self.state.default_command is None:
             raw_command = splited_input[0]
             if raw_command != ".":
                 raw_command = raw_command.strip('.')
@@ -78,7 +75,9 @@ class Controler:
             raw_values = ' '.join(splited_input[base:]).strip().split(',')
         else:
             raw_values = []
-        return (raw_command, raw_values)
+        feedback.raw_command = raw_command
+        feedback.raw_values = raw_values
+        return None
 
 
     def find_command(self, raw_command):

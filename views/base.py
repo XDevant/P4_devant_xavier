@@ -17,11 +17,11 @@ class View:
         return answer
 
 
-    def gather_value(self, next_key):
-        if next_key is None:
+    def gather_value(self, keys):
+        if keys is []:
             message = "\nEntrez la/les valeur(s) manquante(s): "
         else:
-            message = f"\nEntrez un(e) {self.prettyfie_key(next_key)}: "
+            message = f"\nEntrez {', '.join([self.prettyfie_key(key) for key in keys])}: "
         answer = input(message)
         return answer
 
@@ -39,36 +39,39 @@ class View:
         return None
 
 
-    def parsing_error(self, command, values, errors):
-        pretty_command = self.prettyfie_command(command)
+    def parsing_error(self, feedback):
+        pretty_command = self.prettyfie_command(feedback.command)
         print(f"\n Valeurs fournies insuffisantes pour la commande: {pretty_command}")
         if self.verbose and not self.muted:
             print(*self.help.values[:3])
-        if len(errors) > 1:
-            print(*errors[:-1])
-        self.display_values(values)
+        if len(feedback.errors) > 0:
+            print(*feedback.errors)
+        self.display_values(feedback.values)
         return None
 
-    def execution_error(self, command, values, errors):
-        print(f"Erreur lors de l'execution de la commande: {command} + {values}")
+    def execution_error(self, feedback):
+        print(f"Erreur lors de l'execution de la commande: {feedback.command} + {feedback.values}")
         return None
 
     def display(self, feedback):
-        print("\n", feedback["title"])
-        for item in feedback["data"]:
+        print("\n", feedback.title)
+        for item in feedback.data:
             print(item)
-        for key, value in feedback.items():
-            if key not in ["title", "data", "menu", "values"] and len(value) > 0:
-                print(value)
-        if "menu" in feedback.keys():
-            self.display_menu(feedback["menu"], feedback["values"])
+        if feedback.info != "":
+            print(feedback.info)
+        if feedback.hint != "":
+            print(feedback.hint)
+        if feedback.important != "":
+            print(feedback.important)
+        if feedback.next_command is not None:
+            self.display_menu(feedback)
         return None
 
 
-    def display_menu(self, command, values):
-        pretty_command = self.prettyfie_command(command)
+    def display_menu(self, feedback):
+        pretty_command = self.prettyfie_command(feedback.next_command)
         print(f"Menu {pretty_command}:")
-        self.display_values(values)
+        self.display_values(feedback.values)
         return None
 
 

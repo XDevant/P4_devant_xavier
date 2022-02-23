@@ -16,41 +16,39 @@ class Command(ABC):
         return False
 
     @abstractmethod
-    def parse_values(self, raw_values, state):
-        return {}, [[]]
+    def parse_values(self, feedback, state):
+        return None
 
 
     @abstractmethod
-    def execute(self, values, db, state):
-        feedback = {"title": "", "data": [], "info": "", "hint": ""}
-        return feedback
+    def execute(self, feedback, db, state):
+        return None
 
     
-    def load_values(self, raw_values, new_dict, saved_dict):
-        errors = []
+    def load_values(self, feedback, saved_dict):
         key_values = {}
         values = []
-        for value in raw_values:
+        for value in feedback.raw_values:
             if '=' in str(value):
                 new_key, value = value.split('=')
-                key = self.translate_key(new_key, new_dict.keys())
+                key = self.translate_key(new_key, feedback.values.keys())
                 if key is not None:
                     check, value = self.format_value(key, value)
                     if check:
                         key_values[key] = value
                     else:
-                        errors.append(value)
+                        feedback.errors.append(value)
                 else:
-                    errors.append(f"Clef incorecte: {new_key} pour valeur {value}")
+                    feedback.errors.append(f"Clef incorecte: {new_key} pour valeur {value}")
             else:
                 values.append(value)
         check = True
-        for key, value in new_dict.items():
+        for key, value in feedback.values.items():
             if key in key_values.keys():
-                new_dict[key] = key_values[key]
+                feedback.values[key] = key_values[key]
                 continue
             if key in saved_dict.keys():
-                new_dict[key] = saved_dict[key]
+                feedback.values[key] = saved_dict[key]
                 continue
             if value is not None:
                 continue
@@ -58,20 +56,19 @@ class Command(ABC):
                 validation, value = self.format_value(key, values[i])
                 if validation:
                     values.pop(i)
-                    new_dict[key] = value
+                    feedback.values[key] = value
                     break
                 else:
-                    errors.append(value)
-            if new_dict[key] is None:
+                    feedback.errors.append(value)
+            if feedback.values[key] is None:
+                feedback.next_keys.append(key)
                 if check:
-                    errors.append(key)
                     check = False
-        if check:
-            errors.append([])
         for key, value in key_values.items():
-            if key not in new_dict.keys():
-                new_dict[key] = value
-        return check, new_dict, errors
+            if key not in feedback.values.keys():
+                feedback.values[key] = value
+        feedback.parsed = check
+        return None
 
 
     def translate_key(self, new_key, keys):

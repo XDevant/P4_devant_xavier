@@ -12,14 +12,14 @@ class ListPlayers(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_values, state):
-        return super().parse_values(raw_values, state)
+    def parse_values(self, feedback, state):
+        feedback.parsed =True
+        return None
 
 
-    def execute(self, values, db, state):
-        feedback = super().execute( values, db, state)
+    def execute(self, feedback, db, state):
         table = db.table("players")
         players = sorted(table.all(), key=lambda player: player['last_name'] + player['first_name'])
-        feedback["title"] = "Rapport: Liste des Joueurs (alphabétique)"
-        feedback["data"] = [Player(**player) for player in players]
-        return feedback
+        feedback.title = "Rapport: Liste des Joueurs (alphabétique)"
+        feedback.data = [Player(**player) for player in players]
+        return None

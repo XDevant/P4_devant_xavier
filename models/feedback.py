@@ -5,14 +5,17 @@ class Feedback:
         self.raw_command = None
         self.raw_value = None
         self.command = None
-        self.values = []
+        self.next_command = None
+        self.next_keys = []
+        self.values = {}
+        self.predicted_values = {}
         self.errors = []
         self.data = []
+        self.matches = []
         self.important = ""
         self.info = ""
         self.hint = ""
         self.example = ""
-        self.found_command = False
-        self.found_parsed = False
+        self.parsed = False
         self.success = False
 

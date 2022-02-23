@@ -11,9 +11,10 @@ class Save(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_values, state):
-        return
+    def parse_values(self, feedback, state):
+        feedback.parsed = True
+        return None
 
 
-    def execute(self, values, db, state):
-        return
+    def execute(self, feedback, db, state):
+        return None

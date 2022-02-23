@@ -12,31 +12,26 @@ class NewTournament(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_values, state):
-        dict = {"name": None, "place": None, "date": None, "description": None, "rule": None, "rounds": 4}
+    def parse_values(self, feedback, state):
+        feedback.values = {"name": None, "place": None, "date": None, "description": None, "rule": None, "rounds": 4}
         saved_dict = state.new_tournament
-        check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
-        if check:
-            return new_dict, errors
+        self.load_values(feedback, saved_dict)
+        if feedback.parsed:
+            return None
         else:
-            state.default_command = "new_tournament"
-            state.next_key = errors[-1]
-            state.new_tournament = {key: value for key, value in new_dict.items() if value is not None}
-            return new_dict, errors
+            state.parsing_failure(feedback)
+            return None
 
 
-    def execute(self, values, db, state):
-        tournament = Tournament(db, **values)
+    def execute(self, feedback, db, state):
+        tournament = Tournament(db, **feedback.values)
         tournament.register(db)
+        
         state.default_tournament = tournament.id
         state.new_tournament = {}
-        state.update_tournament = {}
         state.default_command = "update_tournament"
-        state.last_command = "new_tournament"
-        state.next_key = "player_id"
-        
-        feedback = super().execute( values, db, state)
-        feedback["title"] = "Nouveau Tournoi crée:"  
-        feedback["data"] = [tournament]
-        feedback["info"] = f"Le tournoi {tournament.id} est maintenant le tournoi par défaut."
-        return feedback
+        state.last_command = feedback.command
+        feedback.title = "Nouveau Tournoi crée:"  
+        feedback.data = [tournament]
+        feedback.info = f"Le tournoi {tournament.id} est maintenant le tournoi par défaut."
+        return None

@@ -12,37 +12,34 @@ class UpdatePlayer(Command):
         return super().is_the_one(input)
 
 
-    def parse_values(self, raw_values, state):
-        dict = {"player_id": state.default_player, "ranking": None}
+    def parse_values(self, feedback, state):
+        feedback.values = {"player_id": state.default_player, "ranking": None}
         saved_dict = state.update_player
-        check, new_dict, errors = self.load_values(raw_values, dict, saved_dict)
+        self.load_values(feedback, saved_dict)
         if state.prediction:
-                return new_dict, [[]]
-        if check:
-            return new_dict, errors
+                return None
+        if feedback.parsed:
+            return None
         else:
             state.default_command = "update_player"
-            state.next_key = errors[-1]
-            state.update_player = {key: value for key, value in new_dict.items() if value is not None}
-            return new_dict, errors
+            state.next_key = feedback.errors[-1]
+            state.update_player = {key: value for key, value in feedback.values.items() if value is not None}
+            return None
 
 
 
-    def execute(self, values, db, state):
-        name = "Nouveau classement:"
+    def execute(self, feedback, db, state):
         table = db.table("players")
-        new_item = Player(**table.get(doc_id=values['player_id']))
-        new_item.ranking = values["ranking"]
+        new_item = Player(**table.get(doc_id=feedback.values['player_id']))
+        new_item.ranking = feedback.values["ranking"]
         new_item.complete_update(table)
 
-        if "ranking" in values.keys():
+        if "ranking" in feedback.values.keys():
             state.default_player = None
         state.update_player = {}
         state.default_command = None
         state.last_command = "update_player"
         state.next_key = None
-
-        feedback = super().execute( values, db, state)
-        feedback["title"] = "Nouveau classement:"
-        feedback["data"] = [new_item]
-        return feedback
+        feedback.title = "Nouveau classement:"
+        feedback.data = [new_item]
+        return None
