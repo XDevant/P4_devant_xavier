@@ -26,15 +26,15 @@ class UpdatePlayer(Command):
     def execute(self, feedback, db, state):
         table = db.table("players")
         player_id = feedback.values['player_id']
-        new_item = Player(**table.get(doc_id=feedback.values['player_id']))
         stringified_player = table.get(doc_id=player_id)
+        print(stringified_player)
         if stringified_player is None:
-            feedback.data = ["Le jouer {player_id} n'existe pas!"]
+            feedback.data = [f"Le jouer {player_id} n'existe pas!"]
             state.execute_refused(feedback, False)
             return None
         new_item = Player(**stringified_player)
         new_item.ranking = feedback.values["ranking"]
-        new_item.complete_update(table)
+        new_item.complete_update(db)
 
         state.execute_succes(feedback)
         state.default_command = None

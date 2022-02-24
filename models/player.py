@@ -1,5 +1,3 @@
-import json
-from tinydb.table import Document
 
 class Player:
     def __init__(self, **kwargs):
@@ -36,27 +34,31 @@ class Player:
     def __repr__(self) -> str:
         return f"{self.first_name} {self.last_name} id: {self.id} classement: {self.ranking}"
 
-    def stringify(self):
-        return json.dumps(self, default=lambda o: o.__dict__, separators=(',',': '))
 
     def serialize(self):
-        stringified = self.stringify()
-        return json.loads(stringified)
+        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
+        serialized = {key : getattr(self, key) for key in keys}
+        return serialized
 
-    def register(self, table):
-        if not self.id:
-            self.id = 1 + len(table)
-        if self.ranking == 'auto':
-            self.ranking = self.id
+
+    def register(self, db):
         if not self.registered:
             self.registered = True
+            table = db.table("players")
             serialized = self.serialize()
-            table.insert(Document(serialized, doc_id=self.id))
+            doc_id = table.insert(serialized)
+            self.id = doc_id
+            if self.ranking == 'auto':
+                self.ranking = self.id
+            serialized = self.serialize()
+            table.update(serialized, doc_ids=[self.id])
             return True
         else:
             return False
 
-    def complete_update(self, table):
+    def complete_update(self, db):
         if self.registered:
             serialized = self.serialize()
-            table.update(serialized, doc_id=self.id)
+            db.table("players").update(serialized, doc_ids=[self.id])
+            return self.id
+        return -1

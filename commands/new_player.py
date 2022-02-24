@@ -26,7 +26,7 @@ class NewPlayer(Command):
 
     def execute(self, feedback, db, state):
         new_item = Player(**feedback.values)
-        new_item.register(db.table("players"))
+        new_item.register(db)
 
         state.execute_succes(feedback)
         state.default_command = None

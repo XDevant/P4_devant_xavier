@@ -34,10 +34,7 @@ class UpdateRound(Command):
             feedback.important = f"Le tournoi {tournament_id} n'existe pas!"
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
-        print(stringified_tournament)
         tournament = Tournament(db, **stringified_tournament)
-        print("tournoi")
-        print(tournament.id)
         if len(tournament.round_details) == 0:
             feedback.important = f"Le tournoi {tournament_id} n'est pas démarré!"
             state.execute_refused(feedback, False)
