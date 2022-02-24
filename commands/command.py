@@ -5,7 +5,7 @@ from controlers.language import key_translation
 
 class Command(ABC):
     def __init__(self):
-        self.commands = ()
+        self.commands = []
         self.natural = [[]]
 
 

@@ -3,7 +3,7 @@ from commands.command import Command
 
 class Save(Command):
     def __init__(self):
-        self.commands = ("s", "e")
+        self.commands = ["s", "e"]
         self.natural = [["sauver", "save", "enregistrer"]]
 
 

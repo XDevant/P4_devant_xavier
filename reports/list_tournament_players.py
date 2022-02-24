@@ -5,7 +5,7 @@ from models.player import Player
 
 class ListTournamentPlayers(Command):
     def __init__(self):
-        self.commands = ("ltj", "ltp")
+        self.commands = ["ltj", "ltp"]
         self.natural = [["liste", "tournoi", "joueurs", "list", "tournament", "players"]]
 
 

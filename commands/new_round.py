@@ -6,7 +6,7 @@ from models.round import Round
 
 class NewRound(Command):
     def __init__(self):
-        self.commands = ("nr", "rd", "rs")
+        self.commands = ["nr", "rd", "rs"]
         self.natural = [["ronde", "démarrer", "round" "start"]]
 
 

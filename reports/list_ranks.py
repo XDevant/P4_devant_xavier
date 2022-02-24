@@ -4,7 +4,7 @@ from models.player import Player
 
 class ListRanks(Command):
     def __init__(self):
-        self.commands = ("lc", "lk")
+        self.commands = ["lc", "lk"]
         self.natural = [["liste", "classement", "list", "ranking"]]
 
 

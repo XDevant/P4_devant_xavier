@@ -4,12 +4,14 @@ from models.tournament import Tournament
 
 class ListTournamentRounds(ListTournamentPlayers):
     def __init__(self):
-        self.commands = ("ltr")
+        self.commands = ["ltr"]
         self.natural = [["liste", "tournoi", "rondes", "list", "tournament", "rounds"]]
 
 
     def is_the_one(self, input):
-        return super().is_the_one(input)
+        if input in self.commands:
+            return True
+        return False
 
 
     def parse_values(self, feedback, state):

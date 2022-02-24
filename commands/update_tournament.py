@@ -5,7 +5,7 @@ from models.tournament import Tournament
 
 class UpdateTournament(Command):
     def __init__(self):
-        self.commands = ("mt", "tm", "tu", "ut")
+        self.commands = ["mt", "tm", "tu", "ut"]
         self.natural = [["tournoi", "actualiser", "tournament", "update"]]
 
 

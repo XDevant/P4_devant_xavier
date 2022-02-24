@@ -4,7 +4,7 @@ from models.tournament import Tournament
 
 class NewTournament(Command):
     def __init__(self):
-        self.commands = ("nt", "tn")
+        self.commands = ["nt", "tn"]
         self.natural = [["nouveau", "new"], ["tournoi", "tournament"]]
 
 

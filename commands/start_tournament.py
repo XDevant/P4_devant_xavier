@@ -6,7 +6,7 @@ from controlers.sprite import TournamentSprite
 
 class StartTournament(Command):
     def __init__(self):
-        self.commands = ("td", "ts", "dt", "st", "dr", "sr", "rd", "rs")
+        self.commands = ["td", "ts", "dt", "st", "dr", "sr", "rd", "rs"]
         self.natural = [["tournoi", "démarrer", "tournament" "start"]]
 
     def is_the_one(self, input):

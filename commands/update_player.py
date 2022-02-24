@@ -4,7 +4,7 @@ from models.player import Player
 
 class UpdatePlayer(Command):
     def __init__(self):
-        self.commands = ( "mj","jm","pu", "up")
+        self.commands = ["mj","jm","pu", "up"]
         self.natural = [["joueur", "modifier", "player""update"]]
 
 

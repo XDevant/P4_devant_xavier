@@ -6,7 +6,7 @@ from models.tournament import Tournament
 
 class UpdateRound(Command):
     def __init__(self):
-        self.commands = ("mr", "rm", "ru", "ur")
+        self.commands = ["mr", "rm", "ru", "ur"]
         self.natural = [["ronde", "actualiser", "round", "update"]]
 
 
@@ -27,15 +27,19 @@ class UpdateRound(Command):
 
     def execute(self, feedback, db, state):
         table = db.table("tournaments")
+        print(feedback.values)
         tournament_id = feedback.values['tournament_id']
         stringified_tournament = table.get(doc_id=tournament_id)
         if stringified_tournament is None:
-            feedback.data = ["Le tournoi {tournament_id} n'existe pas!"]
+            feedback.important = f"Le tournoi {tournament_id} n'existe pas!"
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
+        print(stringified_tournament)
         tournament = Tournament(db, **stringified_tournament)
+        print("tournoi")
+        print(tournament.id)
         if len(tournament.round_details) == 0:
-            feedback.data = ["Le tournoi {tournament_id} n'est pas démarré!"]
+            feedback.important = f"Le tournoi {tournament_id} n'est pas démarré!"
             state.execute_refused(feedback, False)
             return None
         round = tournament.round_details[-1]
@@ -43,7 +47,7 @@ class UpdateRound(Command):
         if i < 0:
             state.execute_refused(feedback, False)
             feedback.title = "Nouveau résultat: Echech"
-            feedback.data = [f"Joueur {i} non inscrit"]
+            feedback.important = f"Joueur {i} non inscrit"
             return feedback
         if j == 0:
             points_a = feedback.values["score"]
