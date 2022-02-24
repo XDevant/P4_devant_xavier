@@ -74,6 +74,7 @@ class StartTournament(Command):
                 tournament.round_details[-1].validate()
             round = Round(name=f"Round {tournament.round + 1}", tournament=tournament.id)
             round.add_matches(*self.generate_round(tournament, db, state))
+            round.register(db)
             tournament.new_round(round)
             tournament.complete_update(db)
             feedback.data = [tournament]

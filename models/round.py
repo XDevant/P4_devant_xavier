@@ -1,5 +1,4 @@
 from datetime import datetime
-from tinydb.table import Document
 
 
 class Round:
@@ -49,8 +48,9 @@ class Round:
         return serialized
 
 
-    def register(self, table):
+    def register(self, db):
         if not self.started:
+            table = db.table("rounds")
             self.start()
             serialized = self.serialize()
             doc_id = table.insert(serialized)
@@ -62,12 +62,12 @@ class Round:
             return False
         
 
-
     def complete_update(self, db):
         if self.started:
             serialized = self.serialize()
-            return db.table("rounds").update(serialized, doc_ids=[self.id])
-        return None
+            db.table("rounds").update(serialized, doc_ids=[self.id])
+            return self.id
+        return -1
 
 
     def start(self):

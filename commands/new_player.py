@@ -29,6 +29,7 @@ class NewPlayer(Command):
         new_item.register(db.table("players"))
 
         state.execute_succes(feedback)
+        state.default_command = None
 
         feedback.title = "Nouveau Joueur crée:"
         feedback.data = [new_item]

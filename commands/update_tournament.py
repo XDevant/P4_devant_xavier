@@ -52,9 +52,10 @@ class UpdateTournament(Command):
             feedback.data = [f"Le tournoi {tournament_id} est déja commencé"]
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
+        table = db.table("players")
         stringified_player = table.get(doc_id=player_id)
         if stringified_player is None:
-            feedback.data = [f"Le jouer {player_id} n'existe pas!"]
+            feedback.data = [f"Le joueur {player_id} n'existe pas!"]
             state.execute_refused(feedback, False)
             return None
         player = tournament.add_player(player_id)

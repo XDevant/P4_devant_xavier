@@ -108,8 +108,9 @@ class Tournament:
         table = db.table("tournaments")
         if self.registered:
             serialized = self.serialize(db)
-            return table.update(serialized, doc_ids=[self.id])
-        return None
+            table.update(serialized, doc_ids=[self.id])
+            return self.id
+        return -1
 
 
     def add_player(self, id):
