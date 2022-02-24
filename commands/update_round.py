@@ -19,7 +19,7 @@ class UpdateRound(Command):
         saved_dict = state.update_round
         self.load_values(feedback, saved_dict)
         if state.prediction or feedback.parsed:
-                return None
+            return None
         else:
             state.parsing_failure(feedback)
             return None
@@ -61,7 +61,7 @@ class UpdateRound(Command):
         tournament.round_details[-1] = round
         tournament.complete_update(db)
         if round.chech_matches() == -1:
-            pass
+            feedback.important = f"Le round n°{tournament.round} est complet, entrez .dr pour commencer un nouveau round."
         state.execute_succes(feedback)
         state.next_keys = ["player_id"]
         if state.active_tournament != tournament.id:

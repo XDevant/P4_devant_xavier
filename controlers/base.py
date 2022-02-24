@@ -1,6 +1,5 @@
 from controlers.selector import Selector
 from controlers.state import State
-from controlers.language import command_translation
 from models.feedback import Feedback
 
 
@@ -32,25 +31,26 @@ class Controler:
             else:
                 self.view.command_error(feedback)
                 continue
+
             if feedback.parsed:
                 try:
                     getattr(self.selector, feedback.command).execute(feedback, self.db, self.state)
                 except Exception as err:
                     self.view.execution_error(feedback)
-                else:
-                    next_command = self.state.default_command
-                    if next_command is not None and next_command != feedback.command:
-                        self.state.prediction = True
-                        feedback.next_command = next_command
-                        getattr(self.selector, next_command).parse_values(feedback, self.state)
-                        self.state.prediction = False
-                    self.view.display(feedback)
-            else:
+                    continue
+            elif not feedback.success:
                 if feedback.command == self.state.last_command:
                     self.view.muted = True
                 else:
                     self.view.muted = False
                 self.view.parsing_error(feedback)
+                continue
+
+            if self.state.default_command is not None and not self.state.validation:
+                feedback.prepare_prediction(self.state)
+                getattr(self.selector, self.state.default_command).parse_values(feedback, self.state)
+                feedback.post_prediction(self.state)
+            self.view.display(feedback)
 
             if feedback.command == "quit":
                         running = False

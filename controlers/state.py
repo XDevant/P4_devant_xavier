@@ -8,7 +8,6 @@ class State:
         self.update_round = {}
         self.start_tournament = {}
         self.active_tournament = None
-        self.default_player = None
         self.default_tournament = None
         self.default_command = None
         self.last_command = ""
@@ -34,6 +33,7 @@ class State:
         setattr(self, feedback.command, {})
         self.default_command = feedback.command
         self.next_keys = []
+        feedback.success = True
 
 
     def execute_succes(self, feedback):
@@ -45,7 +45,8 @@ class State:
 
     def execute_refused(self, feedback, check):
         setattr(self, feedback.command, {})
-        self.next_key = None
+        self.next_keys = ["player_id"]
+        feedback.succes = False
         if check:
             feedback.info = f"Le tournoi {self.default_tournament} n'est plus le tournoi par défaut."
             self.default_tournament = None

@@ -18,26 +18,21 @@ class NewRound(Command):
         feedback.values = {"tournament_id": state.active_tournament, "name": None}
         saved_dict = state.new_round
         self.load_values(feedback, saved_dict)
-        if (state.validation and feedback.raw_values == ['']) or state.prediction or feedback.parsed:
-                return None
+        if state.prediction or feedback.parsed:
+            return None
         else:
-            state.default_command = "new_round"
-            state.next_key = feedback.errors[-1]
-            state.new_round = {key: value for key, value in feedback.values.items() if value is not None}
+            state.parsing_failure(feedback)
             return None
 
 
     def execute(self, feedback, db, state):
         table = db.table("tournaments")
         stringified_tournament = table.get(doc_id=feedback.values["tournament_id"])
-        if stringified_tournament is None or "matches" not in state.new_round.keys():
+        if stringified_tournament is None:
             feedback.title = f"Nouvelle Ronde : Echec!"
-            if stringified_tournament is None:
-                feedback.data = [f"Le tournoi {feedback.values['tournament_id']} n'existe pas!"]
-            else:
-                feedback.data = ["La ronde précédente n'est pas terminée!"]
+            feedback.data = [f"Le tournoi {feedback.values['tournament_id']} n'existe pas!"]
             state.default_command = None
-            state.next_key = None
+            state.next_keys = []
             state.new_round = {}
             return None
         tournament = Tournament(db, **stringified_tournament)

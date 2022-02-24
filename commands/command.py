@@ -11,7 +11,7 @@ class Command(ABC):
 
     @abstractmethod
     def is_the_one(self, input):
-        if input.startswith(self.commands):
+        if input in self.commands:
             return True
         return False
 

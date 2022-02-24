@@ -17,7 +17,7 @@ class UpdatePlayer(Command):
         saved_dict = state.update_player
         self.load_values(feedback, saved_dict)
         if state.prediction or feedback.parsed:
-                return None
+            return None
         else:
             state.parsing_failure(feedback)
             return None

@@ -18,14 +18,20 @@ class UpdateTournament(Command):
             feedback.values = {"tournament_id": None, "player_id": None}
         else:
             feedback.values = {"tournament_id": state.default_tournament, "player_id": None}
-        saved_dict = state.update_tournament
-        self.load_values(feedback, saved_dict)
-        state.update_tournament = {key: value for key, value in feedback.values.items() if value is not None}
-        if (state.validation and feedback.raw_values == ['']) or state.prediction or feedback.parsed:
-            return None
-        if state.validation:
+        if state.prediction:
+            saved_dict = {}
+        else:
+            saved_dict = state.update_tournament
+        if state.validation and feedback.raw_values != ['']:
             state.validation_failure(feedback)
-            feedback.errors = ["Commande annulée Joueur toujours inscrit"]
+            feedback.title = f"Désinscrire Joueur :"
+            feedback.data = ["Commande annulée Joueur toujours inscrit"]
+            return None
+        self.load_values(feedback, saved_dict)
+        if state.validation or state.prediction or feedback.parsed:
+            feedback.parsed = True
+            if state.validation:
+                feedback.success = True
         else:
             state.parsing_failure(feedback)
         return None
@@ -38,22 +44,23 @@ class UpdateTournament(Command):
         table = db.table("tournaments")
         stringified_tournament = table.get(doc_id=tournament_id)
         if stringified_tournament is None:
-            feedback.data = ["Le tournoi {tournament_id} n'existe pas!"]
+            feedback.data = [f"Le tournoi {tournament_id} n'existe pas!"]
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
         tournament = Tournament(db, **stringified_tournament)
         if tournament.started:
-            feedback.data = ["Le tournoi {tournament_id} est déja commencé"]
+            feedback.data = [f"Le tournoi {tournament_id} est déja commencé"]
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
         stringified_player = table.get(doc_id=player_id)
         if stringified_player is None:
-            feedback.data = ["Le jouer {player_id} n'existe pas!"]
+            feedback.data = [f"Le jouer {player_id} n'existe pas!"]
             state.execute_refused(feedback, False)
             return None
         player = tournament.add_player(player_id)
         if player == -1 and not state.validation:
             state.validation = True
+            state.update_tournament = {key: value for key, value in feedback.values.items() if value is not None}
             feedback.title = f"Tournoi n°{tournament_id}, Veillez confirmer la commande Désinscrire Joueur.(Entrée)"
             feedback.data = [f"Joueur {player_id} déjà inscrit"]
             feedback.info = "Vous pouver saisir n'importe quel autre caractère pour annuler."
@@ -62,13 +69,13 @@ class UpdateTournament(Command):
                 state.validation = False
                 tournament.remove_player(player_id)
                 feedback.title = f"Tournoi n°{tournament_id}, Joueur {player_id} désinscrit:"
-            state.update_tournament = {}
             tournament.complete_update(db)
             feedback.data = [tournament]
-        state.next_key = "player_id"
+            feedback.success = True
+            state.update_tournament = {}
         state.last_command = "update_tournament"
+        state.default_command = "update_tournament"
         if tournament_id != state.default_tournament:
             state.default_tournament = tournament_id
             feedback.info = f"Le tournoi {tournament_id} est maintenant le tournoi par défaut."
-        state.default_command = "update_tournament"
         return None
