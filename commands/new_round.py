@@ -1,4 +1,3 @@
-from datetime import datetime
 from commands.command import Command
 from models.tournament import Tournament
 from models.round import Round

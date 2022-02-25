@@ -1,21 +1,18 @@
 from commands.command import Command
-from models.player import Player
-from models.tournament import Tournament
-
 
 
 class UpdateRound(Command):
     def __init__(self):
         self.commands = ["mr", "rm", "ru", "ur"]
-        self.natural = [["ronde", "actualiser", "round", "update"]]
-
+        self.keys = ["tournament_id", "player_id", "score"]
+        self.values = [None, None, None]
 
     def is_the_one(self, input):
         return super().is_the_one(input)
 
-
     def parse_values(self, feedback, state):
-        feedback.values = {"tournament_id": state.active_tournament, "player_id": None, "score": None}
+        feedback.values = {key: value for key, value in zip(self.keys, self.values)}
+        feedback.values["tournament_id"] = state.active_tournament
         saved_dict = state.update_round
         self.load_values(feedback, saved_dict)
         if state.prediction or feedback.parsed:
@@ -23,7 +20,6 @@ class UpdateRound(Command):
         else:
             state.parsing_failure(feedback)
             return None
-    
 
     def execute(self, feedback, db, state):
         feedback.title = "Nouveau résultat: Echec"

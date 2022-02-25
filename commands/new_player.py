@@ -5,13 +5,14 @@ from models.player import Player
 class NewPlayer(Command):
     def __init__(self):
         self.commands = ["nj", "np", "jn", "pn"]
-        self.natural = [["nouveau", "new"], ["joueur", "player"]]
+        self.keys = ["last_name", "first_name", "date_of_birth", "gender", "ranking"]
+        self.values = [None, None, None, None, 'auto']
 
     def is_the_one(self, input):
         return super().is_the_one(input)
 
     def parse_values(self, feedback, state):
-        feedback.values = {"last_name": None, "first_name": None, "date_of_birth": None, "gender": None, "ranking": 'auto'}
+        feedback.values = {key: value for key, value in zip(self.keys, self.values)}
         saved_dict = state.new_player
         self.load_values(feedback, saved_dict)
         if feedback.parsed:

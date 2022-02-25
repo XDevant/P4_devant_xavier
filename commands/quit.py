@@ -3,26 +3,23 @@ from commands.command import Command
 
 class Quit(Command):
     def __init__(self):
-        self.commands = ("q", "x")
-        self.natural = [["quitter", "exit", "close", "fermer"]]
-        self.values = None
-
+        self.commands = ["q", "x"]
+        self.keys = []
+        self.values = []
 
     def is_the_one(self, input):
         return super().is_the_one(input)
-
 
     def parse_values(self, feedback, state):
         if state.validation and feedback.raw_values != ['']:
             state.validation = False
             state.default_command = None
             feedback.success = True
-            feedback.title = f"Quitter programme :"
+            feedback.title = "Quitter programme :"
             feedback.data = ["Commande annulée"]
         else:
             feedback.parsed = True
         return None
-
 
     def execute(self, feedback, db, state):
         if state.last_command == "save" and state.validation:
@@ -40,7 +37,7 @@ class Quit(Command):
             feedback.info = "Vous pouver saisir n'importe quel autre caractère pour annuler."
             if state.last_command != "save":
                 feedback.important = "Vous n'avez pas sauvegardé l'êtat du programme!"
-                feedback.hint = "Si vous quiitez sans sauvegarde, les items en cours de création seront perdus."
+                feedback.important += " Les items en cours de création seront perdus."
             state.validation = True
             state.default_command = feedback.command
         feedback.success = True

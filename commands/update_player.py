@@ -4,13 +4,11 @@ from models.player import Player
 
 class UpdatePlayer(Command):
     def __init__(self):
-        self.commands = ["mj","jm","pu", "up"]
+        self.commands = ["mj", "jm", "pu", "up"]
         self.natural = [["joueur", "modifier", "player""update"]]
-
 
     def is_the_one(self, input):
         return super().is_the_one(input)
-
 
     def parse_values(self, feedback, state):
         feedback.values = {"player_id": None, "ranking": None}
@@ -21,7 +19,6 @@ class UpdatePlayer(Command):
         else:
             state.parsing_failure(feedback)
             return None
-
 
     def execute(self, feedback, db, state):
         table = db.table("players")
