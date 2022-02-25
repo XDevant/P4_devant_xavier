@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from controlers.language import key_translation
-
+from models.tournament import Tournament
 
 
 class Command(ABC):
@@ -104,3 +104,41 @@ class Command(ABC):
                 return True, value
         return False, f"Valeur incorrecte pour {key}: {value}"
 
+
+    def load_tournament(self, feedback, db, state):
+        table = db.table("tournaments")
+        stringified_tournament = table.get(doc_id=feedback.values["tournament_id"])
+        if stringified_tournament is None:
+            feedback.important = f"Le tournoi {feedback.values['tournament_id']} n'existe pas!"
+            return None
+        return Tournament(db, **stringified_tournament)
+
+    
+    def check_start(self, feedback, state, tournament):
+        if tournament.round == 0 and (len(tournament.players) % 2 != 0 or len(tournament.players) <= tournament.rounds):
+            feedback.title = "Démarrer Tournoi:"
+            feedback.important = "Nombre d'inscrits impair ou insuffisant!"
+            state.default_command = "update_tournament"
+            state.default_tournament = tournament.id
+            return False
+        return True
+
+
+    def check_end_round(self, feedback, state, tournament):
+        if tournament.round > 0 and tournament.round_details[-1].chech_matches() >= 0:
+            feedback.title = "Démarrer Nouveau Round:"
+            feedback.important = "Echec! La ronde actuelle n'est pas terminée!"
+            state.default_command = "update_tournament"
+            state.active_tournament = tournament.id
+            return False
+        return True
+
+
+    def check_ended(self, feedback, state, tournament):
+        if tournament.finished:
+            feedback.title = "Démarrer Nouveau Round:"
+            feedback.important = "Tournoi déja terminé"
+            state.default_command = None
+            state.active_tournament = None
+            return False
+        return True

@@ -52,8 +52,8 @@ class Controler:
                 feedback.post_prediction(self.state)
             self.view.display(feedback)
 
-            if feedback.command == "quit":
-                        running = False
+            if feedback.command == "quit" and not self.state.validation:
+                break
             self.state.ignore_default = False
 
 

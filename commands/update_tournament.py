@@ -74,8 +74,8 @@ class UpdateTournament(Command):
             feedback.data = [tournament]
             feedback.success = True
             state.update_tournament = {}
-        state.last_command = "update_tournament"
-        state.default_command = "update_tournament"
+        state.last_command = feedback.command
+        state.default_command = feedback.command
         if tournament_id != state.default_tournament:
             state.default_tournament = tournament_id
             feedback.info = f"Le tournoi {tournament_id} est maintenant le tournoi par défaut."

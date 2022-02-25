@@ -26,15 +26,12 @@ class UpdateRound(Command):
     
 
     def execute(self, feedback, db, state):
-        table = db.table("tournaments")
-        print(feedback.values)
+        feedback.title = "Nouveau résultat: Echec"
         tournament_id = feedback.values['tournament_id']
-        stringified_tournament = table.get(doc_id=tournament_id)
-        if stringified_tournament is None:
-            feedback.important = f"Le tournoi {tournament_id} n'existe pas!"
+        tournament = self.load_tournament(feedback, db, state)
+        if tournament is None:
             state.execute_refused(feedback, tournament_id == state.default_tournament)
             return None
-        tournament = Tournament(db, **stringified_tournament)
         if len(tournament.round_details) == 0:
             feedback.important = f"Le tournoi {tournament_id} n'est pas démarré!"
             state.execute_refused(feedback, False)
@@ -43,9 +40,8 @@ class UpdateRound(Command):
         i, j = round.find_indexes(feedback.values["player_id"])
         if i < 0:
             state.execute_refused(feedback, False)
-            feedback.title = "Nouveau résultat: Echech"
             feedback.important = f"Joueur {i} non inscrit"
-            return feedback
+            return None
         if j == 0:
             points_a = feedback.values["score"]
             if round.matches[i][1][1] is None:
@@ -62,7 +58,11 @@ class UpdateRound(Command):
         tournament.round_details[-1] = round
         tournament.complete_update(db)
         if round.chech_matches() == -1:
-            feedback.important = f"Le round n°{tournament.round} est complet, entrez .dr pour commencer un nouveau round."
+            feedback.important = f"Le round n°{tournament.round} est complet"
+            if tournament.round == tournament.rounds:
+                feedback.important += ", entrez .tt pour clore le Tournoi."
+            else:
+                feedback.important += ", entrez .dr pour commencer un nouveau round."
         state.execute_succes(feedback)
         state.next_keys = ["player_id"]
         if state.active_tournament != tournament.id:
