@@ -7,15 +7,12 @@ class ListRanks(Command):
         self.commands = ["lc", "lk"]
         self.natural = [["liste", "classement", "list", "ranking"]]
 
-
     def is_the_one(self, input):
         return super().is_the_one(input)
 
-
     def parse_values(self, feedback, state):
-        feedback.parsed =True
+        feedback.parsed = True
         return None
-
 
     def execute(self, feedback, db, state):
         table = db.table("players")

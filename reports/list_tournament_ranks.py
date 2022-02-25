@@ -6,18 +6,15 @@ class ListTournamentRanks(ListTournamentPlayers):
         self.commands = ["ltc", "ltk"]
         self.natural = [["liste", "tournoi", "classements", "list", "tournament", "ranks"]]
 
-
     def is_the_one(self, input):
         if input in self.commands:
             return True
         return False
 
-
     def parse_values(self, feedback, state):
         super().parse_values(feedback, state)
         state.default_command = "list_tournament_ranks"
         return None
-
 
     def execute(self, feedback, db, state):
         super().execute(feedback, db, state)

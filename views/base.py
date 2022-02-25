@@ -2,6 +2,7 @@ from views.help import Help
 from views.report import Report
 from controlers.language import Translation
 
+
 class View:
     def __init__(self):
         self.verbose = True
@@ -16,7 +17,6 @@ class View:
         answer = input("\nEntrez une commande: ")
         return answer
 
-
     def gather_value(self, keys):
         if keys is []:
             message = "\nEntrez la/les valeur(s) manquante(s): "
@@ -24,7 +24,6 @@ class View:
             message = f"\nEntrez {', '.join([self.prettyfie_key(key) for key in keys])}: "
         answer = input(message)
         return answer
-
 
     def gather_confirmation(self, default_command):
         if default_command == "update_tournament":
@@ -37,7 +36,6 @@ class View:
     def command_error(self, input):
         print(f"Aucune commande trouvé pour {input}, entrez .la pour afficher la liste des actions possibles")
         return None
-
 
     def parsing_error(self, feedback):
         pretty_command = self.prettyfie_command(feedback.command)
@@ -69,13 +67,11 @@ class View:
                 self.display_menu(feedback)
         return None
 
-
     def display_menu(self, feedback):
         pretty_command = self.prettyfie_command(feedback.next_command)
         print(f"Menu {pretty_command}:")
         self.display_values("Valeurs actuelles: ", feedback.values)
         return None
-
 
     def display_values(self, name, values):
         display_values = {}
@@ -89,12 +85,10 @@ class View:
         print(name, display_values)
         return None
 
-
     def display_actions(self):
         for key, value in self.translation.commands.items():
             print(value[self.language])
         return None
-
 
     def prettyfie_command(self, command):
         try:
@@ -102,7 +96,6 @@ class View:
         except KeyError:
             pretty_command = command
         return pretty_command
-
 
     def prettyfie_key(self, key):
         try:

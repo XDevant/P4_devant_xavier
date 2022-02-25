@@ -7,12 +7,10 @@ class ListTournamentRounds(ListTournamentPlayers):
         self.commands = ["ltr"]
         self.natural = [["liste", "tournoi", "rondes", "list", "tournament", "rounds"]]
 
-
     def is_the_one(self, input):
         if input in self.commands:
             return True
         return False
-
 
     def parse_values(self, feedback, state):
         super().parse_values(feedback, state)
@@ -22,7 +20,7 @@ class ListTournamentRounds(ListTournamentPlayers):
     def execute(self, feedback, db, state):
         stringified_tournament = db.table("tournaments").get(doc_id=feedback.values["tournament_id"])
         if stringified_tournament is None:
-            feedback.title = f"Rapport: Tournoi, Liste des Joueurs"
+            feedback.title = "Rapport: Tournoi, Liste des Rondes"
             feedback.data = ["Aucun tournoi correspondant à cet identifiant"]
         else:
             tournament = Tournament(db, **stringified_tournament)

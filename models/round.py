@@ -4,7 +4,7 @@ from datetime import datetime
 class Round:
     def __init__(self, **kwargs):
         if 'name' in kwargs:
-            self.name =  kwargs['name']
+            self.name = kwargs['name']
         else:
             self.name = "Round "
         if 'tournament' in kwargs:
@@ -12,26 +12,24 @@ class Round:
         else:
             self.tournament = None
         if 'matches' in kwargs:
-            self.matches =  kwargs['matches']
+            self.matches = kwargs['matches']
         else:
             self.matches = []
         if 'started' in kwargs:
-            self.started =  kwargs['started']
+            self.started = kwargs['started']
         else:
             self.started = False
         if 'ended' in kwargs:
-            self.ended =  kwargs['ended']
+            self.ended = kwargs['ended']
         else:
             self.ended = False
         if 'id' in kwargs:
-            self.id =  kwargs['id']
+            self.id = kwargs['id']
         else:
             self.id = False
 
-
     def __iter__(self):
         return self.matches.__iter__()
-
 
     def __repr__(self):
         look = self.name + ": "
@@ -41,12 +39,10 @@ class Round:
             i += 1
         return look
 
-
     def serialize(self):
-        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
-        serialized = {key : getattr(self, key) for key in keys}
+        keys = [a for a in dir(self) if not (callable(getattr(self, a)) or a.startswith('_'))]
+        serialized = {key: getattr(self, key) for key in keys}
         return serialized
-
 
     def register(self, db):
         if not self.started:
@@ -60,7 +56,6 @@ class Round:
             return True
         else:
             return False
-        
 
     def complete_update(self, db):
         if self.started:
@@ -69,14 +64,12 @@ class Round:
             return self.id
         return -1
 
-
     def start(self):
         if self.started:
             return False
         else:
             self.started = str(datetime.today())
             return True
-
 
     def validate(self):
         if self.ended or not len(self.matches) == 0 or self.chech_matches() >= 0:
@@ -85,7 +78,6 @@ class Round:
             self.ended = str(datetime.today())
             return True
 
-
     def chech_matches(self):
         for i in range(len(self.matches)):
             match = self.matches[i]
@@ -93,18 +85,17 @@ class Round:
                 return i
         return -1
 
-
     def add_matches(self, *args):
-        self.matches = [([match_ids[0], None], [match_ids[1], None]) for match_ids in args]
-
+        self.matches = [([match[0], None], [match[1], None]) for match in args]
 
     def update_match(self, index, points_a, points_b):
         if index < len(self.matches):
-            self.matches[index] = ([self.matches[index][0][0], points_a], [self.matches[index][1][0], points_b])
+            player_1 = [self.matches[index][0][0], points_a]
+            player_2 = [self.matches[index][1][0], points_b]
+            self.matches[index] = (player_1, player_2)
             return True
         else:
             return False
-
 
     def find_indexes(self, player_id):
         for i in range(len(self.matches)):

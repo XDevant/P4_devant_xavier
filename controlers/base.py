@@ -35,7 +35,7 @@ class Controler:
             if feedback.parsed:
                 try:
                     getattr(self.selector, feedback.command).execute(feedback, self.db, self.state)
-                except Exception as err:
+                except Exception:
                     self.view.execution_error(feedback)
                     continue
             elif not feedback.success:
@@ -55,7 +55,6 @@ class Controler:
             if feedback.command == "quit" and not self.state.validation:
                 break
             self.state.ignore_default = False
-
 
     def parse_input(self, feedback):
         if feedback.input == "..":
@@ -78,7 +77,6 @@ class Controler:
         feedback.raw_command = raw_command
         feedback.raw_values = raw_values
         return None
-
 
     def find_command(self, raw_command):
         if raw_command:

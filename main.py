@@ -9,5 +9,6 @@ def main():
     ctrl = Controler(db, view)
     ctrl.run()
 
+
 if __name__ == "__main__":
     main()

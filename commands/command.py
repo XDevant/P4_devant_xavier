@@ -8,7 +8,6 @@ class Command(ABC):
         self.commands = []
         self.natural = [[]]
 
-
     @abstractmethod
     def is_the_one(self, input):
         if input in self.commands:
@@ -19,12 +18,10 @@ class Command(ABC):
     def parse_values(self, feedback, state):
         return None
 
-
     @abstractmethod
     def execute(self, feedback, db, state):
         return None
 
-    
     def load_values(self, feedback, saved_dict):
         key_values = {}
         values = []
@@ -39,7 +36,8 @@ class Command(ABC):
                     else:
                         feedback.errors.append(value)
                 else:
-                    feedback.errors.append(f"Clef incorecte: {new_key} pour valeur {value}")
+                    error = f"Clef incorecte: {new_key} pour valeur {value}"
+                    feedback.errors.append(error)
             else:
                 values.append(value)
         check = True
@@ -70,13 +68,11 @@ class Command(ABC):
         feedback.parsed = check
         return None
 
-
     def translate_key(self, new_key, keys):
         for key in keys:
             if new_key.lower().strip() in key_translation[key] + [key]:
                 return key
         return None
-
 
     def format_value(self, key, value):
         value = value.strip(' \'"')
@@ -84,7 +80,9 @@ class Command(ABC):
             check = value.isnumeric() and int(value) > 0
             if check:
                 return check, int(value)
-            return check,  f"Valeur incorrecte pour {key}: {value}, attendu entier positif"
+            error = f"Valeur incorrecte pour {key}: {value}"
+            error += ", attendu entier positif"
+            return check,  error
         if key == "score":
             if str(value) in ["0", "D"]:
                 return True, 0
@@ -92,30 +90,35 @@ class Command(ABC):
                 return True, 1
             if str(value) in ["0.5", "N", "1/2"]:
                 return True, 0.5
-            return False,  f"Valeur incorrecte pour {key}: {value}, attendu 0, 1, 0.5, V, D, N, 1/2"
+            error = f"Valeur incorrecte pour {key}: {value}"
+            error += ", attendu 0, 1, 0.5, V, D, N, 1/2"
+            return False,  error
         elif "date" in key:
             return True, value
         elif key == "rule":
             if value.lower() in ["blitz", "bullet", "coup rapide"]:
                 return True, value
-            return False, f"Valeur incorrecte pour {key}: {value}, attendu blitz, bullet ou coup rapide"
+            error = f"Valeur incorrecte pour {key}: {value}"
+            error += ", attendu blitz, bullet ou coup rapide"
+            return False, error
         else:
             if len(value) > 0:
                 return True, value
         return False, f"Valeur incorrecte pour {key}: {value}"
 
-
     def load_tournament(self, feedback, db, state):
         table = db.table("tournaments")
-        stringified_tournament = table.get(doc_id=feedback.values["tournament_id"])
+        tournament_id = feedback.values["tournament_id"]
+        stringified_tournament = table.get(doc_id=tournament_id)
         if stringified_tournament is None:
-            feedback.important = f"Le tournoi {feedback.values['tournament_id']} n'existe pas!"
+            feedback.important = f"Le tournoi {tournament_id} n'existe pas!"
             return None
         return Tournament(db, **stringified_tournament)
 
-    
     def check_start(self, feedback, state, tournament):
-        if tournament.round == 0 and (len(tournament.players) % 2 != 0 or len(tournament.players) <= tournament.rounds):
+        check_1 = len(tournament.players) % 2 != 0
+        check_2 = len(tournament.players) <= tournament.rounds
+        if tournament.round == 0 and (check_1 or check_2):
             feedback.title = "Démarrer Tournoi:"
             feedback.important = "Nombre d'inscrits impair ou insuffisant!"
             state.default_command = "update_tournament"
@@ -123,16 +126,15 @@ class Command(ABC):
             return False
         return True
 
-
     def check_end_round(self, feedback, state, tournament):
-        if tournament.round > 0 and tournament.round_details[-1].chech_matches() >= 0:
+        missing = tournament.round_details[-1].chech_matches() >= 0
+        if tournament.round > 0 and missing:
             feedback.title = "Démarrer Nouveau Round:"
             feedback.important = "Echec! La ronde actuelle n'est pas terminée!"
             state.default_command = "update_tournament"
             state.active_tournament = tournament.id
             return False
         return True
-
 
     def check_ended(self, feedback, state, tournament):
         if tournament.finished:

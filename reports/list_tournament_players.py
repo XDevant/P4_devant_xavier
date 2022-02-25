@@ -8,10 +8,8 @@ class ListTournamentPlayers(Command):
         self.commands = ["ltj", "ltp"]
         self.natural = [["liste", "tournoi", "joueurs", "list", "tournament", "players"]]
 
-
     def is_the_one(self, input):
         return super().is_the_one(input)
-
 
     def parse_values(self, feedback, state):
         if state.active_tournament is None:
@@ -28,7 +26,6 @@ class ListTournamentPlayers(Command):
             state.next_keys = ["tournament_id"]
             return None
 
-
     def execute(self, feedback, db, state):
         stringified_tournament = db.table("tournaments").get(doc_id=feedback.values["tournament_id"])
         if stringified_tournament is None:
@@ -40,7 +37,7 @@ class ListTournamentPlayers(Command):
             player_ids = tournament.players
             feedback.title = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
             if player_ids == []:
-                feedback.data= ["Aucun joueur inscrit en tournoi"]
+                feedback.data = ["Aucun joueur inscrit en tournoi"]
             else:
                 players = [table.get(doc_id=id) for id in player_ids]
                 players.sort(key=lambda player: player['last_name'] + player['first_name'])

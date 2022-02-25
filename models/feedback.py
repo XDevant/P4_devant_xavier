@@ -20,14 +20,12 @@ class Feedback:
         self.parsed = False
         self.success = False
 
-
     def prepare_prediction(self, state):
         self.raw_values_save = self.raw_values
         self.raw_values = []
         self.values = {}
         state.prediction = True
         self.next_command = state.default_command
-
 
     def post_prediction(self, state):
         self.raw_values = self.raw_values_save

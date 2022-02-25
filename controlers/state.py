@@ -16,17 +16,14 @@ class State:
         self.prediction = False
         self.ignore_default = False
 
-
     def __repr__(self):
-        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
+        keys = [a for a in dir(self) if not (callable(getattr(self, a)) or a.startswith('_'))]
         return "".join([f"{key}: {getattr(self, key)}\n" for key in keys])
 
-
     def serialize(self):
-        keys = [attrib for attrib in dir(self) if not callable(getattr(self, attrib)) and not attrib.startswith('__')]
-        serialized = {key : getattr(self, key) for key in keys}
+        keys = [a for a in dir(self) if not (callable(getattr(self, a)) or a.startswith('_'))]
+        serialized = {key: getattr(self, key) for key in keys}
         return serialized
-
 
     def register(self, db):
         table = db.table("save")
@@ -35,12 +32,11 @@ class State:
         table.insert(serialized)
         return True
 
-
     def parsing_failure(self, feedback):
         self.default_command = feedback.command
         self.next_keys = feedback.next_keys
-        setattr(self, feedback.command, {key: value for key, value in feedback.values.items() if value is not None})
-
+        dict = {key: value for key, value in feedback.values.items() if value is not None}
+        setattr(self, feedback.command, dict)
 
     def validation_failure(self, feedback):
         self.validation = False
@@ -49,13 +45,11 @@ class State:
         self.next_keys = []
         feedback.success = True
 
-
     def execute_succes(self, feedback):
         setattr(self, feedback.command, {})
         self.last_command = feedback.command
         self.next_keys = []
         feedback.succes = True
-
 
     def execute_refused(self, feedback, check):
         setattr(self, feedback.command, {})
@@ -63,7 +57,8 @@ class State:
         self.next_keys = ["player_id"]
         feedback.succes = False
         if check:
-            feedback.info = f"Le tournoi {self.default_tournament} n'est plus le tournoi par défaut."
+            n = self.default_tournament
+            feedback.info = f"Le tournoi n°{n} n'est plus le tournoi par défaut."
             self.default_tournament = None
 
     def start_ok(self, feedback, tournament_id, next_command):
