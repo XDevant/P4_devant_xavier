@@ -7,3 +7,5 @@ TournamentManager/views/__pycache__/
 TournamentManager/controlers/__pycache__/
 TournamentManager/commands/__pycache__/
 TournamentManager/reports/__pycache__/
+test.py
+help.py
