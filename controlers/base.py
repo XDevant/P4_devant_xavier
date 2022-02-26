@@ -15,7 +15,8 @@ class Controler:
         while running:
             feedback = Feedback()
             if self.state.validation:
-                feedback.input = self.view.gather_confirmation(self.state.default_command)
+                default = self.state.default_command
+                feedback.input = self.view.gather_confirmation(default)
             elif self.state.default_command is None:
                 feedback.input = self.view.gather_command()
             else:
@@ -27,14 +28,16 @@ class Controler:
                 feedback.command = self.find_command(feedback.raw_command)
 
             if feedback.command:
-                getattr(self.selector, feedback.command).parse_values(feedback, self.state)
+                args = self.selector, feedback.command
+                getattr(*args).parse_values(feedback, self.state)
             else:
                 self.view.command_error(feedback)
                 continue
 
             if feedback.parsed:
                 try:
-                    getattr(self.selector, feedback.command).execute(feedback, self.db, self.state)
+                    args = self.selector, feedback.command
+                    getattr(*args).execute(feedback, self.db, self.state)
                 except Exception:
                     self.view.execution_error(feedback)
                     continue
@@ -48,7 +51,8 @@ class Controler:
 
             if self.state.default_command is not None and not self.state.validation:
                 feedback.prepare_prediction(self.state)
-                getattr(self.selector, self.state.default_command).parse_values(feedback, self.state)
+                default = self.state.default_command
+                getattr(self.selector, default).parse_values(feedback, self.state)
                 feedback.post_prediction(self.state)
             self.view.display(feedback)
 

@@ -1,12 +1,10 @@
 from commands.command import Command
-from models.tournament import Tournament
 from models.player import Player
 
 
 class ListTournamentPlayers(Command):
     def __init__(self):
         self.commands = ["ltj", "ltp"]
-        self.natural = [["liste", "tournoi", "joueurs", "list", "tournament", "players"]]
 
     def is_the_one(self, input):
         return super().is_the_one(input)
@@ -27,22 +25,23 @@ class ListTournamentPlayers(Command):
             return None
 
     def execute(self, feedback, db, state):
-        stringified_tournament = db.table("tournaments").get(doc_id=feedback.values["tournament_id"])
-        if stringified_tournament is None:
-            feedback.title = f"Rapport: Tournoi {feedback.values['tournament_id']}, Liste des Joueurs"
+        feedback.title = "Rapport: Tournoi, Liste des Matches"
+        tournament = self.load_tournament(feedback, db, state)
+        if tournament is None:
             feedback.data = ["Aucun tournoi correspondant à cet identifiant"]
         else:
-            tournament = Tournament(db, **stringified_tournament)
             table = db.table("players")
             player_ids = tournament.players
-            feedback.title = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Joueurs"
+            new_title = f" {tournament.name} (n°{tournament.id}),"
+            splited_title = feedback.title.split(',')
+            feedback.title = splited_title[0] + new_title + splited_title[0]
             if player_ids == []:
                 feedback.data = ["Aucun joueur inscrit en tournoi"]
             else:
                 players = [table.get(doc_id=id) for id in player_ids]
-                players.sort(key=lambda player: player['last_name'] + player['first_name'])
+                players.sort(key=lambda p: p['last_name'] + p['first_name'])
                 feedback.data = [Player(**player) for player in players]
-
+                feedback.succes = True
         state.default_command = None
         state.next_key = None
         return None

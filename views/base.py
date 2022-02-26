@@ -21,7 +21,8 @@ class View:
         if keys is []:
             message = "\nEntrez la/les valeur(s) manquante(s): "
         else:
-            message = f"\nEntrez {', '.join([self.prettyfie_key(key) for key in keys])}: "
+            pretty_keys = ', '.join([self.prettyfie_key(key) for key in keys])
+            message = f"\nEntrez + : " + pretty_keys
         answer = input(message)
         return answer
 
@@ -34,7 +35,8 @@ class View:
         return answer
 
     def command_error(self, input):
-        print(f"Aucune commande trouvé pour {input}, entrez .la pour afficher la liste des actions possibles")
+        message = f"Aucune commande trouvé pour {input}"
+        print(message + ", entrez .la pour afficher la liste des actions possibles")
         return None
 
     def parsing_error(self, feedback):
@@ -46,7 +48,8 @@ class View:
         return None
 
     def execution_error(self, feedback):
-        print(f"Erreur lors de l'execution de la commande: {feedback.command} + {feedback.values}")
+        message = "Erreur lors de l'execution de la commande: "
+        print(message + f"{feedback.command} + {feedback.values}")
         print("Entrez .la pour afficher la liste des actions possibles")
         return None
 

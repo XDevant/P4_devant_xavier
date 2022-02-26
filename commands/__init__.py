@@ -1,10 +1,19 @@
-from commands.save import Save
-from commands.quit import Quit
-from commands.new_player import NewPlayer
-from commands.new_tournament import NewTournament
-from commands.new_round import NewRound
-from commands.update_player import UpdatePlayer
-from commands.update_tournament import UpdateTournament
-from commands.update_round import UpdateRound
-from commands.start_tournament import StartTournament
-from commands.new_round import NewRound
+from .new_player import NewPlayer
+from .new_tournament import NewTournament
+from .update_player import UpdatePlayer
+from .start_tournament import StartTournament
+from .update_tournament import UpdateTournament
+from .update_round import UpdateRound
+from .save import Save
+from .quit import Quit
+
+_a = [NewPlayer,
+      NewTournament,
+      UpdatePlayer,
+      StartTournament,
+      UpdateTournament,
+      UpdateRound,
+      Save,
+      Quit]
+if _a:
+    pass

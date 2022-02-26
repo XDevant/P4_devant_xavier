@@ -1,11 +1,9 @@
 from reports.list_tournament_players import ListTournamentPlayers
-from models.tournament import Tournament
 
 
 class ListTournamentMatchs(ListTournamentPlayers):
     def __init__(self):
         self.commands = ["ltm"]
-        self.natural = [["liste", "tournoi", "matches", "list", "tournament", "matches"]]
 
     def is_the_one(self, input):
         if input in self.commands:
@@ -18,19 +16,20 @@ class ListTournamentMatchs(ListTournamentPlayers):
         return None
 
     def execute(self, feedback, db, state):
-        stringified_tournament = db.table("tournaments").get(doc_id=feedback.values["tournament_id"])
-        if stringified_tournament is None:
-            feedback.title = "Rapport: Tournoi, Liste des Matches"
+        feedback.title = "Rapport: Tournoi, Liste des Matches"
+        tournament = self.load_tournament(feedback, db, state)
+        if tournament is None:
             feedback.data = ["Aucun tournoi correspondant à cet identifiant"]
         else:
-            tournament = Tournament(db, **stringified_tournament)
-            feedback.title = f"Rapport: Tournoi {tournament.name} (n°{tournament.id}), Liste des Matches"
+            new_title = f" {tournament.name} (n°{tournament.id}),"
+            splited_title = feedback.title.split(',')
+            feedback.title = splited_title[0] + new_title + splited_title[0]
             rounds = tournament.round_details
             if len(rounds) > 0:
                 feedback.data = rounds
             else:
                 feedback.data = ["Aucun round trouvé pour ce tournoi"]
-
+            feedback.succes = True
         state.default_command = None
         state.next_key = None
         return None

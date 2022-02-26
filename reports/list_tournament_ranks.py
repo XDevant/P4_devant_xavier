@@ -4,7 +4,6 @@ from reports.list_tournament_players import ListTournamentPlayers
 class ListTournamentRanks(ListTournamentPlayers):
     def __init__(self):
         self.commands = ["ltc", "ltk"]
-        self.natural = [["liste", "tournoi", "classements", "list", "tournament", "ranks"]]
 
     def is_the_one(self, input):
         if input in self.commands:
@@ -21,4 +20,5 @@ class ListTournamentRanks(ListTournamentPlayers):
         feedback.title = feedback.title.split(',')[0] + ", Classements"
         if not isinstance(feedback.data[0], str):
             feedback.data.sort(key=lambda player: player.ranking)
+        feedback.succes = True
         return None
