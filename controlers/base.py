@@ -8,9 +8,27 @@ class Controler:
         self.selector = selector
         self.state = state
 
+    def start(self, new):
+        feedback = Feedback()
+        if new:
+            feedback.title = "Bienvenue !"
+            feedback.data = ['Entrez "la" pour afficherer la liste des action']
+            self.view.display(feedback)
+        else:
+            feedback.title = "Bon retour, sauvegarde rechargée"
+            feedback.data = ['Entrez ".." pour réinitialiser le programme']
+            self.view.display(feedback)
+            feedback.next_command = self.state.default_command
+            try:
+                feedback.values = getattr(self.state, feedback.next_command)
+            except Exception:
+                self.view.display_menu_title(feedback)
+            else:
+                self.view.display_menu(feedback)
+
+
     def run(self):
-        running = True
-        while running:
+        while True:
             feedback = Feedback()
             if self.state.validation:
                 default = self.state.default_command
@@ -60,7 +78,7 @@ class Controler:
 
     def parse_input(self, feedback):
         if feedback.input == "..":
-            return ("..", [])
+            return (".r", [])
         base = 0
         splited_input = feedback.input.split(' ')
         if feedback.input.startswith('..'):

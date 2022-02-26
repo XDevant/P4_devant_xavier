@@ -6,6 +6,7 @@ from .update_tournament import UpdateTournament
 from .update_round import UpdateRound
 from .save import Save
 from .quit import Quit
+from .reset import Reset
 
 _a = [NewPlayer,
       NewTournament,
@@ -14,6 +15,7 @@ _a = [NewPlayer,
       UpdateTournament,
       UpdateRound,
       Save,
-      Quit]
+      Quit,
+      Reset]
 if _a:
     pass

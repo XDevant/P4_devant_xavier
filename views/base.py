@@ -76,6 +76,11 @@ class View:
         self.display_values("Valeurs actuelles: ", feedback.values)
         return None
 
+    def display_menu_title(self, feedback):
+        pretty_command = self.prettyfie_command(feedback.next_command)
+        print(f"Menu {pretty_command}:")
+        return None
+
     def display_values(self, name, values):
         display_values = {}
         for key, value in values.items():
@@ -89,7 +94,7 @@ class View:
         return None
 
     def display_actions(self):
-        for key, value in self.translation.commands.items():
+        for key , value in self.translation.commands.items():
             print(value[self.language])
         return None
 

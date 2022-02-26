@@ -12,10 +12,13 @@ def main():
     table = db.table("save")
     if len(table.all()) == 0:
         state = State()
+        new = True
     else:
         state = State(**table.all()[0])
         table.truncate()
+        new = False
     ctrl = Controler(db, selector, view, state)
+    ctrl.start(new)
     ctrl.run()
 
 
