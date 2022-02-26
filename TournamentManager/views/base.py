@@ -1,5 +1,3 @@
-from views.help import Help
-from views.report import Report
 from controlers.language import Translation
 
 
@@ -8,8 +6,6 @@ class View:
         self.verbose = True
         self.examples = True
         self.muted = False
-        self.help = Help()
-        self.report = Report()
         self.translation = Translation()
         self.language = 0
 
