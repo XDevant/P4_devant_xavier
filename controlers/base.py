@@ -1,14 +1,12 @@
-from controlers.selector import Selector
-from controlers.state import State
 from models.feedback import Feedback
 
 
 class Controler:
-    def __init__(self, db, view):
+    def __init__(self, db, selector, view, state):
         self.db = db
         self.view = view
-        self.selector = Selector()
-        self.state = State()
+        self.selector = selector
+        self.state = state
 
     def run(self):
         running = True
