@@ -12,7 +12,6 @@ class ListTournamentRounds(ListTournamentPlayers):
 
     def parse_values(self, feedback, state):
         super().parse_values(feedback, state)
-        state.default_command = "list_tournament_rounds"
         return None
 
     def execute(self, feedback, db, state):

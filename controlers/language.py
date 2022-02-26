@@ -41,6 +41,8 @@ command_translation = {
                                "Tournament Round List"],
     "list_tournament_matchs": ["Liste des matches du Tournoi",
                                "Tournament Match List"],
+    "list_tournament_cards": ["Liste des Cartes des Joueurs du Tournoi",
+                               "Tournament Players Card List"],
     "list_actions": ["Liste des Actions", "Action List"]
     }
 

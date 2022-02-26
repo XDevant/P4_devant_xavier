@@ -7,16 +7,23 @@ class TournamentSprite:
         self.round_details = tournament.round_details
         self.sprites = [PlayerSprite(tournament, p, db) for p in self.players]
 
-    def __repr__(self):
-        sprite = f"Tournoi: {self.id}, en {self.rounds} rondes."
-        sprite += f" Ronde {self.round + 1}: {self.sprites}"
-        return sprite
+    def __iter__(self):
+        return self.sprites.__iter__()
 
-    def sort_players(self):
-        if self.round == 1:
+    def __repr__(self):
+        sprite_str = f"Tournoi: {self.id}, en {self.rounds} rondes."
+        sprite_str += f" Ronde actuelle:{self.round}:\n"
+        for sprite in self.sprites:
+            sprite_str += sprite.__repr__()
+        return sprite_str
+
+    def sort_players(self, key):
+        if key == "ranking":
             self.sprites.sort(key=lambda sprite: sprite.ranking)
-        if self.round > 1:
+        if key == "swiss":
             self.sprites.sort(key=lambda s: s.ranking * 10 + s.score / self.rounds)
+        if key == "score":
+            self.sprites.sort(key=lambda sprite: -sprite.score)
 
     def generate_matches(self):
         matches = []
@@ -44,7 +51,9 @@ class TournamentSprite:
 class PlayerSprite:
     def __init__(self, tournament, player_id, db):
         self.id = player_id
-        self.ranking = db.table("players").get(doc_id=player_id)["ranking"]
+        self.player_string = db.table("players").get(doc_id=player_id)
+        self.full_name = self.player_string["first_name"] + self.player_string["last_name"]
+        self.ranking = self.player_string["ranking"]
         self.score = 0
         self.played = []
         if tournament.round > 0:
@@ -58,6 +67,6 @@ class PlayerSprite:
                         self.played.append(match[0][0])
 
     def __repr__(self):
-        sprite = f"Id:{self.id}, rang: {self.ranking}, score: {self.score}."
-        sprite += f" Tours précédents: {self.played}"
+        sprite = f"({self.id}){self.full_name}, rang: {self.ranking}, score: {self.score}"
+        sprite += f" adversaires précédents: {self.played}\n"
         return sprite
