@@ -1,4 +1,3 @@
-
 class Player:
     def __init__(self, **kwargs):
         if 'last_name' in kwargs:

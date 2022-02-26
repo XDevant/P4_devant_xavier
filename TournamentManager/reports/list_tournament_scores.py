@@ -28,4 +28,3 @@ class ListTournamentScores(ListTournamentPlayers):
         state.default_command = None
         state.next_key = None
         return None
-

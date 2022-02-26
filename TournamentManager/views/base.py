@@ -22,7 +22,7 @@ class View:
             message = "\nEntrez la/les valeur(s) manquante(s): "
         else:
             pretty_keys = ', '.join([self.prettyfie_key(key) for key in keys])
-            message = f"\nEntrez " + pretty_keys + ": "
+            message = "\nEntrez " + pretty_keys + ": "
         answer = input(message)
         return answer
 
@@ -94,7 +94,7 @@ class View:
         return None
 
     def display_actions(self):
-        for key , value in self.translation.commands.items():
+        for key, value in self.translation.commands.items():
             print(value[self.language])
         return None
 

@@ -26,7 +26,6 @@ class Controler:
             else:
                 self.view.display_menu(feedback)
 
-
     def run(self):
         while True:
             feedback = Feedback()

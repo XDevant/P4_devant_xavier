@@ -125,4 +125,3 @@ class Tournament:
     def new_round(self, round):
         self.round += 1
         self.round_details.append(round)
-  

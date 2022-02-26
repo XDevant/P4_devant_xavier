@@ -103,7 +103,7 @@ class State:
         self.active_tournament = tournament_id
         self.last_command = feedback.command
         self.validation = False
-        
+
     def clear_menu(self):
         self.default_command = None
         self.next_keys = []

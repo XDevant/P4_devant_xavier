@@ -1,9 +1,9 @@
 env/
 .vscode/settings.json
 P4.code-workspace
-models/__pycache__/
-views/help.py
-views/__pycache__/
-controlers/__pycache__/
-commands/__pycache__/
-reports/__pycache__/
+TournamentManager/models/__pycache__/
+TournamentManager/views/help.py
+TournamentManager/views/__pycache__/
+TournamentManager/controlers/__pycache__/
+TournamentManager/commands/__pycache__/
+TournamentManager/reports/__pycache__/

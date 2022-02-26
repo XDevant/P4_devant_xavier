@@ -1,5 +1,4 @@
 from commands.command import Command
-from models.tournament import Tournament
 
 
 class UpdateTournament(Command):
