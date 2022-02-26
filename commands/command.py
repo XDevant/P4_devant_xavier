@@ -127,7 +127,10 @@ class Command(ABC):
         return True
 
     def check_end_round(self, feedback, state, tournament):
-        missing = tournament.round_details[-1].chech_matches() >= 0
+        if len(tournament.round_details) == 0:
+            missing = False
+        else:
+            missing = tournament.round_details[-1].chech_matches() >= 0
         if tournament.round > 0 and missing:
             feedback.title = "Démarrer Nouveau Round:"
             feedback.important = "Echec! La ronde actuelle n'est pas terminée!"
@@ -143,4 +146,14 @@ class Command(ABC):
             state.default_command = None
             state.active_tournament = None
             return False
+        return True
+
+    def can_start(self, feedback, tournament):
+        check_1 = len(tournament.players) % 2 != 0
+        check_2 = len(tournament.players) <= tournament.rounds
+        if tournament.round == 0 and (check_1 or check_2):
+            feedback.important = "Nombre d'inscrits impair ou insuffisant!"
+            return False
+        feedback.important = "Nombre d'inscrits pair et suffisant! "
+        feedback.important += "Entrez .dt pour démarrer le tournoi. "
         return True

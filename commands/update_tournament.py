@@ -38,14 +38,12 @@ class UpdateTournament(Command):
         player_id = feedback.values['player_id']
         feedback.title = f"Tournoi n°{tournament_id}, "
         feedback.title += f"inscription nouveau Joueur {player_id}:"
-        table = db.table("tournaments")
-        stringified_tournament = table.get(doc_id=tournament_id)
         check = tournament_id == state.default_tournament
-        if stringified_tournament is None:
-            feedback.data = [f"Le tournoi {tournament_id} n'existe pas!"]
+        feedback.title = "Démarrer Tournoi/Nouveau Round:"
+        tournament = self.load_tournament(feedback, db, state)
+        if tournament is None:
             state.execute_refused(feedback, check)
             return None
-        tournament = Tournament(db, **stringified_tournament)
         if tournament.started:
             feedback.data = [f"Le tournoi {tournament_id} est déja commencé"]
             state.execute_refused(feedback, check)
@@ -74,6 +72,7 @@ class UpdateTournament(Command):
             feedback.data = [tournament]
             feedback.success = True
             state.update_tournament = {}
+            self.can_start(feedback, tournament)
         state.last_command = feedback.command
         state.default_command = feedback.command
         if tournament_id != state.default_tournament:

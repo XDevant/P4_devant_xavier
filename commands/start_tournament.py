@@ -6,9 +6,10 @@ from controlers.sprite import TournamentSprite
 class StartTournament(Command):
     def __init__(self):
         self.commands = ["td", "ts", "dt", "st", "dr", "sr", "rd", "rs", "tt"]
-        self.keys = []
-        self.values = []
+        self.keys = ["tournament_id"]
+        self.values = [None]
         self.next_command = "update_round"
+        self.previous_command = "update_tournament"
 
     def is_the_one(self, input):
         return super().is_the_one(input)
@@ -26,6 +27,7 @@ class StartTournament(Command):
             saved_dict = {}
         if state.validation and feedback.raw_values != ['']:
             state.validation_failure(feedback)
+            state.default_command = None
             feedback.title = "Démarrer tournoi/Nouveau Round :"
             feedback.data = ["Commande annulée"]
             return None
@@ -84,14 +86,14 @@ class StartTournament(Command):
             elif tournament.round == tournament.rounds - 1:
                 feedback.title += f"Terminer Tournoi n°{tournament.id}.(Entrée)"
             else:
-                feedback.title += f"Démarrer nouveau Round n°{tournament.id}.(Entrée)"
+                feedback.title += f"Démarrer Round n°{tournament.round + 1}.(Entrée)"
             feedback.info = "Vous pouver saisir n'importe quel autre caractère pour annuler."
             feedback.data = [tournament]
             feedback.success = True
             state.validation = True
             state.default_command = feedback.command
             state.default_tournament = tournament.id
-            state.next_key = None
+            state.next_keys = []
         return None
 
     def generate_round(self, tournament, db):

@@ -24,7 +24,6 @@ class UpdatePlayer(Command):
         table = db.table("players")
         player_id = feedback.values['player_id']
         stringified_player = table.get(doc_id=player_id)
-        print(stringified_player)
         if stringified_player is None:
             feedback.data = [f"Le jouer {player_id} n'existe pas!"]
             state.execute_refused(feedback, False)
