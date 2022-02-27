@@ -19,7 +19,6 @@ key_translation = {
 command_translation = {
     "new_player": ["Nouveau Joueur", "New Player"],
     "new_tournament": ["Nouveau Tournoi", "New Tournament"],
-    "new_round": ["Nouvelle Ronde", "New Round"],
     "update_player": ["Modifier Joueur", "Update Player"],
     "update_tournament": ["Modifier Tournoi", "Update Tournament"],
     "update_round": ["Modifier Round", "Update Round"],

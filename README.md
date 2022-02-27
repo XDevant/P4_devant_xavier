@@ -20,3 +20,4 @@ The spimplest way to test it is to:
         python3 tournamentmanager.py
 
 Note: flake8-html
+run flake8 --format=html --htmldir=flake-report --max-line-length 94
