@@ -1,4 +1,6 @@
 class TournamentSprite:
+    """The swiss rules. Created at the beguining of each round to générate the
+    matches"""
     def __init__(self, tournament, db):
         self.id = tournament.id
         self.rounds = tournament.rounds

@@ -1,0 +1,92 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    " \n",
+    " # Programme de gestion de tournoi d'échecs (règle suisse).\n",
+    " \n",
+    "[Repo github P4_devant_xavier](https://github.com/XDevant/P4_devant_xavier)\n",
+    "\n",
+    "### Usage:\n",
+    "\n",
+    "Pour taper une commande, il faut taper '.' suivi des initiales de la commandes, séparer la commande des valeurs par un espace et les valeurs par des virgules\n",
+    "\n",
+    "**Exemple: **\n",
+    "\n",
+    " .nj Lambert, Alphonse, 22/06/1970, genre=M\n",
+    " \n",
+    " Si les valeurs sont incorrectes ou si vous tapez juste la commande, vous serez orienté vers un sous menu qui précisera les valeurs manquantes et leur nom (clef).\n",
+    " Il n'est pas neccessaire de taper la commande depuis un sous menu, les valeurs suffisent.\n",
+    " Pour changer une valeur déjà entrée, il faut la donner sous la forme de clef=valeur comme dans l'exemple.\n",
+    "\n",
+    "\n",
+    "### Liste des commandes:\n",
+    "\n",
+    "Nouveau Joueur : .nj\n",
+    "\n",
+    "Nouveau Tournoi: .nt\n",
+    "\n",
+    "Nouvelle Ronde: .nr\n",
+    "\n",
+    "Modifier Joueur: .mj\n",
+    "\n",
+    "Modifier Tournoi: .mt\n",
+    "\n",
+    "Modifier Round: .mr\n",
+    "\n",
+    "Démarrer Tournoi: .dt\n",
+    "\n",
+    "Clore Tournoi: .ct ou .dt\n",
+    "\n",
+    "Démarrer Ronde: .dr ou .dt\n",
+    "\n",
+    "Sauver: .s\n",
+    "\n",
+    "Quitter: .q\n",
+    "\n",
+    "Réinitialiser: .r\n",
+    "\n",
+    "Liste des Joueurs: .lj\n",
+    "\n",
+    "Liste des Classements: .lc\n",
+    "\n",
+    "Liste des Tournois: .lt\n",
+    "\n",
+    "Liste des Joueurs en Tournoi: .ltj\n",
+    "\n",
+    "Liste des Classements en Tournoi: .ltc\n",
+    "\n",
+    "Liste des Rounds du Tournoi: .ltr\n",
+    "\n",
+    "Liste des matches du Tournoi: .ltm\n",
+    "\n",
+    "Liste des Scores des Joueurs du Tournoi: .lts\n",
+    "\n",
+    "Liste des Actions: .la"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -4,18 +4,23 @@ from models.tournament import Tournament
 
 
 class Command(ABC):
+    """The command class model, stores base behaviour for commands without input
+    and few shared utils methods like load values"""
     def __init__(self):
         self.commands = []
         self.natural = [[]]
 
     @abstractmethod
     def is_the_one(self, input):
+        """Check if the command is the command asked."""
         if input in self.commands:
             return True
         return False
 
     @abstractmethod
     def parse_values(self, feedback, state):
+        """Prepares the dicts with needed value name as keys and uses
+        the load_values method to fill them."""
         return None
 
     @abstractmethod

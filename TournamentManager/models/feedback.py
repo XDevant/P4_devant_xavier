@@ -1,4 +1,7 @@
 class Feedback:
+    """The feedback object stores event on each iteration of the loop
+    Created at the start and forgotten at the end.
+    It is sent to the view with the results."""
     def __init__(self):
         self.title = ""
         self.input = None

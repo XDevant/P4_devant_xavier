@@ -1,4 +1,7 @@
 class State:
+    """Stores the state of the script: Every unfinished creation and menu
+    Used by the commands parse_values methodto parse mising data and updated
+    by the execute and predict methods"""
     def __init__(self, **kwargs):
         self.new_player = {}
         if 'new_player' in kwargs:
@@ -78,7 +81,9 @@ class State:
     def validation_started(self, feedback):
         feedback.success = True
         self.validation = True
+        print("a")
         self.default_command = feedback.command
+        print("b")
         self.next_keys = []
 
     def execute_succes(self, feedback):

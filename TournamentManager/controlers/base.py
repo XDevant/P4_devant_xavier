@@ -2,6 +2,7 @@ from models.feedback import Feedback
 
 
 class Controler:
+    """"The program's controler, saves its state and reloads it when started"""
     def __init__(self, db, selector, view, state):
         self.db = db
         self.view = view
@@ -27,6 +28,8 @@ class Controler:
                 self.view.display_menu(feedback)
 
     def run(self):
+        """Infinite loop waiting for user input. Then finds the commands, its values,
+         executes the command and prédicts next menu"""
         while True:
             feedback = Feedback()
             if self.state.validation:
@@ -76,8 +79,11 @@ class Controler:
             self.state.ignore_default = False
 
     def parse_input(self, feedback):
+        """First input parsing, split input into a command and a list of values in Feedback"""
         if feedback.input == "..":
-            return (".r", [])
+            feedback.raw_command = "r"
+            feedback.raw_values = []
+            return None
         base = 0
         splited_input = feedback.input.split(' ')
         if feedback.input.startswith('..'):
@@ -98,6 +104,7 @@ class Controler:
         return None
 
     def find_command(self, raw_command):
+        """Finds the command asked by the user Return the command name"""
         if raw_command:
             for command in self.selector:
                 result = getattr(self.selector, command).is_the_one(raw_command)

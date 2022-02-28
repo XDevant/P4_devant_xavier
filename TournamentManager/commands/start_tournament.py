@@ -76,7 +76,7 @@ class StartTournament(Command):
                 feedback.info = info
                 state.start_ok(feedback, tournament.id, self.next_command)
             tournament.complete_update(db)
-            feedback.data = [tournament]
+            feedback.data = [tournament.round_details[-1]]
         else:
             feedback.title = "Veillez confirmer la commande "
             if tournament.round == 0:
@@ -87,7 +87,7 @@ class StartTournament(Command):
                 feedback.title += f"Démarrer Round n°{tournament.round + 1}.(Entrée)"
             feedback.info = "Vous pouver saisir n'importe quel autre caractère pour annuler."
             feedback.data = [tournament]
-            state.validation_success(feedback)
+            state.validation_started(feedback)
             state.default_tournament = tournament.id
         return None
 

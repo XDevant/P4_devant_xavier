@@ -47,6 +47,7 @@ command_translation = {
 
 
 class Translation:
+    """Stores dicts for translation of input keys and display"""
     def __init__(self):
         self.keys = key_translation
         self.commands = command_translation
