@@ -1,5 +1,5 @@
 from commands.command import Command
-
+from controlers.state import State
 
 class Reset(Command):
     def __init__(self):
@@ -18,6 +18,6 @@ class Reset(Command):
         feedback.success = True
         feedback.title = "Réinitialisation du programme:"
         feedback.data = ["L'êtat du programme est Réinitialisé"]
-        state.clear_menu()
+        state = State()
         state.last_command = feedback.command
         return None

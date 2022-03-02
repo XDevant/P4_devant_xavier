@@ -81,9 +81,7 @@ class State:
     def validation_started(self, feedback):
         feedback.success = True
         self.validation = True
-        print("a")
         self.default_command = feedback.command
-        print("b")
         self.next_keys = []
 
     def execute_succes(self, feedback):

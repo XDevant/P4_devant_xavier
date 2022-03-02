@@ -58,8 +58,8 @@ class StartTournament(Command):
                 feedback.title = "Tournoi terminé:"
                 tournament.finished = True
                 tournament.round_details[-1].validate()
-                self.active_tournament = None
-                self.validation = False
+                state.active_tournament = None
+                state.validation = False
                 state.clear_menu()
             else:
                 if tournament.round == 0:
@@ -70,7 +70,9 @@ class StartTournament(Command):
                     feedback.title = "Nouveau Round démarré:"
                     tournament.round_details[-1].validate()
                 round = Round(name=f"Round {tournament.round + 1}", tournament=tournament.id)
-                round.add_matches(*self.generate_round(tournament, db))
+                matches = self.generate_round(tournament, db)
+                print(matches)
+                round.add_matches(*matches)
                 round.register(db)
                 tournament.new_round(round)
                 feedback.info = info

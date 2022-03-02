@@ -47,6 +47,9 @@ class TournamentSprite:
                         index = free_players.index(sprite)
                         free_players.pop(index)
                         break
+                if len(new_match) == 1:
+                    new_match.append(free_players.pop(0).id)
+                    matches.append(new_match)
         return matches
 
 
